@@ -31,7 +31,9 @@ public class ChessBoard {
      * pos
      */
     public ChessPiece getPiece(ChessPosition pos) {
-      return squares[pos.getRow()-1][pos.getColumn()-1];
+    var row = pos.getRow()-1;
+    var col =pos.getColumn()-1;
+    return squares[row] [col];
     }
 
     /**
