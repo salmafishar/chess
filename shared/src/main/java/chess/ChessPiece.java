@@ -55,41 +55,8 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessPiece piece = board.getPiece(myPosition);
         Collection<ChessMove> moves = new java.util.ArrayList<>();
-
-        if (this.getPieceType() != PieceType.BISHOP) {
-            return moves;
-        }
-
-        int r0 = myPosition.getRow();
-        int c0 = myPosition.getColumn();
-
-        int[][] directions = {
-                {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
-        };
-
-        for (int[] d : directions) {
-            int dr = d[0];
-            int dc = d[1];
-
-            int r = r0 + dr;
-            int c = c0 + dc;
-            while (r >= 1 && r <= 8 && c >= 1 && c <= 8) {
-                ChessPosition nextPos = new ChessPosition(r, c);
-                ChessPiece occ = board.getPiece(nextPos);
-
-                if (occ == null) {
-                    moves.add(new ChessMove(myPosition, nextPos, null));
-                    r += dr;
-                    c += dc;
-                } else {
-                    if (occ.getTeamColor() != this.getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, nextPos, null));
-                    }
-                }
-                break;
-            }
-        }
+        throw new RuntimeException("Not implemented");
     }
-    return moves;
 }
