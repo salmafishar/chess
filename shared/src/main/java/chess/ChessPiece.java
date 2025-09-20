@@ -10,6 +10,18 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessPiece that)) return false;
+        return this.getTeamColor() == that.getTeamColor()
+                && this.getPieceType() == that.getPieceType();
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(pieceColor, type);
+    }
 
     private boolean in(int row, int col) {
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
