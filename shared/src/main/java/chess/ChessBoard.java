@@ -1,8 +1,5 @@
 package chess;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -25,7 +22,6 @@ public class ChessBoard {
     public void addPiece(ChessPosition pos, ChessPiece piece){
     squares[pos.getRow()-1][pos.getColumn()-1] =piece;
     }
-
     /**
      * Gets a chess piece on the chessboard
      *
@@ -44,33 +40,33 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-    for (int r = 0 ; r<8; r++){
-        for( int c =0; c < 8; c++){
-            squares [r][c] = null;
+        for (int r = 0 ; r<8; r++){
+            for( int c =0; c < 8; c++){
+                squares [r][c] = null;
+            }
         }
-    }
-    for (int c = 1; c <= 8; c++) {
-        addPiece(new ChessPosition(2, c),
-                new ChessPiece(ChessGame.TeamColor.WHITE,
-                ChessPiece.PieceType.PAWN));
-        addPiece(new ChessPosition(7, c),
-                new ChessPiece(ChessGame.TeamColor.BLACK,
-                ChessPiece.PieceType.PAWN));
-    }
-    ChessPiece.PieceType[] back = {
-            ChessPiece.PieceType.ROOK,   ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.BISHOP,
-            ChessPiece.PieceType.QUEEN,  ChessPiece.PieceType.KING,
-            ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK
-    };
-    for (int c = 1; c <= 8; c++) {
-        addPiece(new ChessPosition(1, c),
-                new ChessPiece(ChessGame.TeamColor.WHITE, back[c-1]));
-    }
-    // black back rank on row 8
-    for (int c = 1; c <= 8; c++) {
-        addPiece(new ChessPosition(8, c),
-                new ChessPiece(ChessGame.TeamColor.BLACK, back[c-1]));
-    }
+        for (int c = 1; c <= 8; c++) {
+            addPiece(new ChessPosition(2, c),
+                    new ChessPiece(ChessGame.TeamColor.WHITE,
+                    ChessPiece.PieceType.PAWN));
+            addPiece(new ChessPosition(7, c),
+                    new ChessPiece(ChessGame.TeamColor.BLACK,
+                    ChessPiece.PieceType.PAWN));
+        }
+        ChessPiece.PieceType[] back = {
+                ChessPiece.PieceType.ROOK,   ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.QUEEN,  ChessPiece.PieceType.KING,
+                ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK
+        };
+        for (int c = 1; c <= 8; c++) {
+            addPiece(new ChessPosition(1, c),
+                    new ChessPiece(ChessGame.TeamColor.WHITE, back[c-1]));
+        }
+        // black back rank on row 8
+        for (int c = 1; c <= 8; c++) {
+            addPiece(new ChessPosition(8, c),
+                    new ChessPiece(ChessGame.TeamColor.BLACK, back[c-1]));
+        }
     }
     @Override
     public boolean equals(Object o) {

@@ -78,14 +78,15 @@ public class ChessPiece {
         final int c0 = myPosition.getColumn();
         final ChessGame.TeamColor me = this.getTeamColor();
 
-        // for KNIGHTS : 2 squares in one direction, 1 in teh other direction (L-shape)
+        // for KNIGHTS :  (L-shape)
         if (this.getPieceType() == PieceType.KNIGHT){
             int [][] move = {
                     { 2, 1}, { 2,-1}, {-2, 1}, {-2,-1},
                     { 1, 2}, { 1,-2}, {-1, 2}, {-1,-2}
             };
             for (int[] m : move){
-                int r =r0+ m[0], c = c0 + m[1];
+                int r =r0+ m[0] ;
+                int c = c0 + m[1];
                 if (!in(r, c)) continue;
                 ChessPiece occ = at(board, r,c);
                 if (occ == null || occ.getTeamColor() != me) {
@@ -96,8 +97,8 @@ public class ChessPiece {
         // for KINGS: move 1 square in any direction
         if (this.getPieceType() == PieceType.KING){
             int[][] move = {
-                { 1, 0}, {-1, 0}, {0, 1}, {0,-1},
-                { 1, 1}, { 1,-1}, {-1, 1}, {-1,-1}
+                    { 1, 0}, {-1, 0}, {0, 1}, {0,-1},
+                    { 1, 1}, { 1,-1}, {-1, 1}, {-1,-1}
             };
             for (int[] m: move){
                 int r =r0+ m[0], c = c0 + m[1];
@@ -120,7 +121,8 @@ public class ChessPiece {
                     ChessPosition to = new ChessPosition(r, c);
                     if (occ == null) {
                         moves.add(new ChessMove(myPosition, to, null));
-                    } else {
+                    }
+                    else {
                         if (occ.getTeamColor() != me) {
                             moves.add(new ChessMove(myPosition, to, null));
                         }
@@ -132,51 +134,51 @@ public class ChessPiece {
         }
 
         // ROOK: slide orthogonally
-                if (this.getPieceType() == PieceType.ROOK) {
-                    int[][] dirs = {
-                            {1,0}, {-1,0}, {0,1}, {0,-1}
-                    };
-                    for (int[] d : dirs) {
-                        int r = r0 + d[0], c = c0 + d[1];
-                        while (in(r, c)) {
-                            ChessPiece occ = at(board, r, c);
-                            ChessPosition to = new ChessPosition(r, c);
-                            if (occ == null) {
-                                moves.add(new ChessMove(myPosition, to, null));
-                            } else {
-                                if (occ.getTeamColor() != me) {
-                                    moves.add(new ChessMove(myPosition, to, null));
-                                }
-                                break;
-                            }
-                            r += d[0]; c += d[1];
+        if (this.getPieceType() == PieceType.ROOK) {
+            int[][] dirs = {
+                    {1,0}, {-1,0}, {0,1}, {0,-1}
+            };
+            for (int[] d : dirs) {
+                int r = r0 + d[0], c = c0 + d[1];
+                while (in(r, c)) {
+                    ChessPiece occ = at(board, r, c);
+                    ChessPosition to = new ChessPosition(r, c);
+                    if (occ == null) {
+                        moves.add(new ChessMove(myPosition, to, null));
+                    } else {
+                        if (occ.getTeamColor() != me) {
+                            moves.add(new ChessMove(myPosition, to, null));
                         }
+                        break;
                     }
+                    r += d[0]; c += d[1];
                 }
+            }
+        }
 
         // QUEEN: rook + bishop directions
-                if (this.getPieceType() == PieceType.QUEEN) {
-                    int[][] dirs = {
-                            {1,1}, {1,-1}, {-1,1}, {-1,-1},
-                            {1,0}, {-1,0}, {0,1}, {0,-1}
-                    };
-                    for (int[] d : dirs) {
-                        int r = r0 + d[0], c = c0 + d[1];
-                        while (in(r, c)) {
-                            ChessPiece occ = at(board, r, c);
-                            ChessPosition to = new ChessPosition(r, c);
-                            if (occ == null) {
-                                moves.add(new ChessMove(myPosition, to, null));
-                            } else {
-                                if (occ.getTeamColor() != me) {
-                                    moves.add(new ChessMove(myPosition, to, null));
-                                }
-                                break;
-                            }
-                            r += d[0]; c += d[1];
+        if (this.getPieceType() == PieceType.QUEEN) {
+            int[][] dirs = {
+                    {1,1}, {1,-1}, {-1,1}, {-1,-1},
+                    {1,0}, {-1,0}, {0,1}, {0,-1}
+            };
+            for (int[] d : dirs) {
+                int r = r0 + d[0], c = c0 + d[1];
+                while (in(r, c)) {
+                    ChessPiece occ = at(board, r, c);
+                    ChessPosition to = new ChessPosition(r, c);
+                    if (occ == null) {
+                        moves.add(new ChessMove(myPosition, to, null));
+                    } else {
+                        if (occ.getTeamColor() != me) {
+                            moves.add(new ChessMove(myPosition, to, null));
                         }
+                        break;
                     }
+                    r += d[0]; c += d[1];
                 }
+            }
+        }
 
         // PAWN
         if (this.getPieceType() == PieceType.PAWN){
@@ -215,7 +217,7 @@ public class ChessPiece {
                         moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.ROOK));
                         moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.BISHOP));
                         moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.KNIGHT));
-                    } else {
+                    }else {
                         moves.add(new ChessMove(myPosition, to, null));
                     }
                 }
