@@ -13,7 +13,9 @@ public class ChessGame {
     private ChessBoard myBoard;
     private TeamColor teamTurn;
     public ChessGame() {
-
+        myBoard = new ChessBoard();
+        myBoard.resetBoard();
+        teamTurn = TeamColor.WHITE;
     }
 
     /**
@@ -73,7 +75,7 @@ public class ChessGame {
         for (int r = 1; r <=8; r++){
             for (int c=1; c<=8; c++){
                 ChessPiece piece = myBoard.getPiece(new ChessPosition(r,c));
-                if (piece !=null && piece.getPieceType()== ChessPiece.PieceType.KING){
+                if (piece !=null && piece.getTeamColor() == teamColor &&piece.getPieceType()== ChessPiece.PieceType.KING){
                     return new ChessPosition(r,c);
                 }
             }
@@ -98,7 +100,7 @@ public class ChessGame {
             for (int c=1; c<=8; c++){
                 ChessPosition position = new ChessPosition(r,c);
                 ChessPiece piece = myBoard.getPiece(position);
-                if (piece!= null && piece.getTeamColor() != opp){
+                if (piece!= null && piece.getTeamColor() == opp){
                     for (ChessMove m: piece.pieceMoves(myBoard, position)){
                         if(m.getEndPosition().equals(kingPos)){return true;}
                     }
