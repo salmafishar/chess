@@ -93,8 +93,7 @@ public class ChessGame {
             for (int c=1; c<=8; c++){
                 ChessPiece piece = myBoard.getPiece(new ChessPosition(r,c));
                 if (piece !=null && piece.getTeamColor() == teamColor &&piece.getPieceType()== ChessPiece.PieceType.KING){
-                    return new ChessPosition(r,c);
-                }
+                    return new ChessPosition(r,c);}
             }
         }
         return null;
