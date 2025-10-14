@@ -152,7 +152,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        //The king is in check: It is being attacked by an opponent's piece.
+        //No legal escape for the king: The king cannot move to a safe square.
+        //No blocking or capturing the attacker: The attacking piece cannot be captured, and no other piece can be moved to block the attack.
+        return isInCheck(teamColor);
     }
 
     /**
@@ -163,7 +166,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return !isInCheck(teamColor);
     }
 
     /**
