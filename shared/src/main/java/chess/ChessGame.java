@@ -59,9 +59,6 @@ public class ChessGame {
         var pseudo = piece.pieceMoves(myBoard,startPosition);
         var legal = new java.util.ArrayList<ChessMove>(pseudo.size());
 
-        for (var mv: pseudo){
-
-        }
         // valid moves:
         return piece.pieceMoves(myBoard,startPosition);
 
@@ -169,5 +166,25 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return myBoard;
+    }
+    @Override
+    public int hashCode() {
+        if (teamTurn == null){return 0;}
+        if (myBoard == null){return 0;}
+        return 31 * (myBoard.hashCode()) + teamTurn.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null){return false;}
+        if (obj == this){return true;}
+        if (!(obj instanceof ChessGame otherGame)){return false;}
+        return (this.myBoard.equals(otherGame.myBoard)
+        && this.teamTurn.equals(otherGame.teamTurn));
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Team turn: %s, Board: %s", teamTurn, myBoard);
     }
 }
