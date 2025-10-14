@@ -9,18 +9,17 @@ import java.util.Collection;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessPiece {
+public record ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ChessPiece that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ChessPiece that)) {
+            return false;
+        }
         return this.getTeamColor() == that.getTeamColor()
                 && this.getPieceType() == that.getPieceType();
-    }
-
-    @Override
-    public int hashCode() {
-        return java.util.Objects.hash(pieceColor, type);
     }
 
     private boolean in(int row, int col) {
@@ -29,13 +28,6 @@ public class ChessPiece {
 
     private ChessPiece at(ChessBoard board, int row, int col) {
         return board.getPiece(new ChessPosition(row, col));
-    }
-    private final ChessGame.TeamColor pieceColor;
-    private final PieceType type;
-
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.pieceColor = pieceColor;
-        this.type = type;
     }
 
     /**
@@ -74,36 +66,40 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> moves = new ArrayList<>();
-        final int r0 = myPosition.getRow();
+        final int r0 = myPosition.row();
         final int c0 = myPosition.getColumn();
         final ChessGame.TeamColor me = this.getTeamColor();
 
         // for KNIGHTS :  (L-shape)
-        if (this.getPieceType() == PieceType.KNIGHT){
-            int [][] move = {
-                    { 2, 1}, { 2,-1}, {-2, 1}, {-2,-1},
-                    { 1, 2}, { 1,-2}, {-1, 2}, {-1,-2}
+        if (this.getPieceType() == PieceType.KNIGHT) {
+            int[][] move = {
+                    {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
+                    {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
             };
-            for (int[] m : move){
-                int r =r0+ m[0] ;
+            for (int[] m : move) {
+                int r = r0 + m[0];
                 int c = c0 + m[1];
-                if (!in(r, c)) continue;
-                ChessPiece occ = at(board, r,c);
+                if (!in(r, c)) {
+                    continue;
+                }
+                ChessPiece occ = at(board, r, c);
                 if (occ == null || occ.getTeamColor() != me) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
                 }
             }
         }
         // for KINGS: move 1 square in any direction
-        if (this.getPieceType() == PieceType.KING){
+        if (this.getPieceType() == PieceType.KING) {
             int[][] move = {
-                    { 1, 0}, {-1, 0}, {0, 1}, {0,-1},
-                    { 1, 1}, { 1,-1}, {-1, 1}, {-1,-1}
+                    {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                    {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
             };
-            for (int[] m: move){
-                int r =r0+ m[0], c = c0 + m[1];
-                if (!in(r, c)) continue;
-                ChessPiece occ = at(board, r,c);
+            for (int[] m : move) {
+                int r = r0 + m[0], c = c0 + m[1];
+                if (!in(r, c)) {
+                    continue;
+                }
+                ChessPiece occ = at(board, r, c);
                 if (occ == null || occ.getTeamColor() != me) {
                     moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
                 }
@@ -112,7 +108,7 @@ public class ChessPiece {
         // BISHOP: slide on diagonals
         if (this.getPieceType() == PieceType.BISHOP) {
             int[][] dirs = {
-                    {1,1}, {1,-1}, {-1,1}, {-1,-1}
+                    {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
             };
             for (int[] d : dirs) {
                 int r = r0 + d[0], c = c0 + d[1];
@@ -121,14 +117,14 @@ public class ChessPiece {
                     ChessPosition to = new ChessPosition(r, c);
                     if (occ == null) {
                         moves.add(new ChessMove(myPosition, to, null));
-                    }
-                    else {
+                    } else {
                         if (occ.getTeamColor() != me) {
                             moves.add(new ChessMove(myPosition, to, null));
                         }
                         break;
                     }
-                    r += d[0]; c += d[1];
+                    r += d[0];
+                    c += d[1];
                 }
             }
         }
@@ -136,7 +132,7 @@ public class ChessPiece {
         // ROOK: slide orthogonally
         if (this.getPieceType() == PieceType.ROOK) {
             int[][] dirs = {
-                    {1,0}, {-1,0}, {0,1}, {0,-1}
+                    {1, 0}, {-1, 0}, {0, 1}, {0, -1}
             };
             for (int[] d : dirs) {
                 int r = r0 + d[0], c = c0 + d[1];
@@ -151,7 +147,8 @@ public class ChessPiece {
                         }
                         break;
                     }
-                    r += d[0]; c += d[1];
+                    r += d[0];
+                    c += d[1];
                 }
             }
         }
@@ -159,8 +156,8 @@ public class ChessPiece {
         // QUEEN: rook + bishop directions
         if (this.getPieceType() == PieceType.QUEEN) {
             int[][] dirs = {
-                    {1,1}, {1,-1}, {-1,1}, {-1,-1},
-                    {1,0}, {-1,0}, {0,1}, {0,-1}
+                    {1, 1}, {1, -1}, {-1, 1}, {-1, -1},
+                    {1, 0}, {-1, 0}, {0, 1}, {0, -1}
             };
             for (int[] d : dirs) {
                 int r = r0 + d[0], c = c0 + d[1];
@@ -175,13 +172,14 @@ public class ChessPiece {
                         }
                         break;
                     }
-                    r += d[0]; c += d[1];
+                    r += d[0];
+                    c += d[1];
                 }
             }
         }
 
         // PAWN
-        if (this.getPieceType() == PieceType.PAWN){
+        if (this.getPieceType() == PieceType.PAWN) {
             int startRow = (me == ChessGame.TeamColor.WHITE) ? 2 : 7;
             int direction = (me == ChessGame.TeamColor.WHITE) ? +1 : -1;
 
@@ -190,10 +188,10 @@ public class ChessPiece {
             if (in(r1, c0) && at(board, r1, c0) == null) {
                 ChessPosition to = new ChessPosition(r1, c0);
                 if ((me == ChessGame.TeamColor.WHITE && r1 == 8) || (me == ChessGame.TeamColor.BLACK && r1 == 1)) {
-                    moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.QUEEN));
-                    moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.ROOK));
-                    moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.BISHOP));
-                    moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.KNIGHT));
+                    moves.add(new ChessMove(myPosition, to, PieceType.QUEEN));
+                    moves.add(new ChessMove(myPosition, to, PieceType.ROOK));
+                    moves.add(new ChessMove(myPosition, to, PieceType.BISHOP));
+                    moves.add(new ChessMove(myPosition, to, PieceType.KNIGHT));
                 } else {
                     moves.add(new ChessMove(myPosition, to, null));
                 }
@@ -213,11 +211,11 @@ public class ChessPiece {
                 if (occ != null && occ.getTeamColor() != me) {
                     ChessPosition to = new ChessPosition(r, cl);
                     if ((me == ChessGame.TeamColor.WHITE && r == 8) || (me == ChessGame.TeamColor.BLACK && r == 1)) {
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.ROOK));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.KNIGHT));
-                    }else {
+                        moves.add(new ChessMove(myPosition, to, PieceType.QUEEN));
+                        moves.add(new ChessMove(myPosition, to, PieceType.ROOK));
+                        moves.add(new ChessMove(myPosition, to, PieceType.BISHOP));
+                        moves.add(new ChessMove(myPosition, to, PieceType.KNIGHT));
+                    } else {
                         moves.add(new ChessMove(myPosition, to, null));
                     }
                 }
@@ -230,10 +228,10 @@ public class ChessPiece {
                     ChessPosition to = new ChessPosition(r, cr);
                     if ((me == ChessGame.TeamColor.WHITE && r == 8) ||
                             (me == ChessGame.TeamColor.BLACK && r == 1)) {
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.ROOK));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.KNIGHT));
+                        moves.add(new ChessMove(myPosition, to, PieceType.QUEEN));
+                        moves.add(new ChessMove(myPosition, to, PieceType.ROOK));
+                        moves.add(new ChessMove(myPosition, to, PieceType.BISHOP));
+                        moves.add(new ChessMove(myPosition, to, PieceType.KNIGHT));
                     } else {
                         moves.add(new ChessMove(myPosition, to, null));
                     }

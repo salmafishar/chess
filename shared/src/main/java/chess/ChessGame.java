@@ -56,6 +56,12 @@ public class ChessGame {
         if (piece == null){
             return null;
         }
+        var pseudo = piece.pieceMoves(myBoard,startPosition);
+        var legal = new java.util.ArrayList<ChessMove>(pseudo.size());
+
+        for (var mv: pseudo){
+
+        }
         // valid moves:
         return piece.pieceMoves(myBoard,startPosition);
 
@@ -73,8 +79,9 @@ public class ChessGame {
          * 2.check null and teamTurn >> throw exceptions
          * 3. call validMoves
          */
-        ChessPosition from = move.getStartPosition();
-        ChessPosition to = move.getEndPosition();
+        // remove the piece from `from`, place it at `to`, checking promotion, flipping teamTurn
+        ChessPosition from = move.startPosition();
+        ChessPosition to = move.endPosition();
         ChessPiece movingPiece = myBoard.getPiece(from);
 
         if (movingPiece == null) {
@@ -85,9 +92,8 @@ public class ChessGame {
         }
         Collection<ChessMove> moves = validMoves(from);
         if (!moves.contains(move)){throw new InvalidMoveException("illegal move!");}
-
     }
-    // method to get the location of teh king to see if it's in check
+    // method to get the location of the king to see if it's in check
     private ChessPosition findKing(TeamColor teamColor){
         for (int r = 1; r <=8; r++){
             for (int c=1; c<=8; c++){
@@ -118,7 +124,7 @@ public class ChessGame {
                 ChessPiece piece = myBoard.getPiece(position);
                 if (piece!= null && piece.getTeamColor() == opp){
                     for (ChessMove m: piece.pieceMoves(myBoard, position)){
-                        if(m.getEndPosition().equals(kingPos)){return true;}
+                        if(m.endPosition().equals(kingPos)){return true;}
                     }
                 }
             }
