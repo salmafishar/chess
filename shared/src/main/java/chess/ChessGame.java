@@ -89,6 +89,15 @@ public class ChessGame {
         }
         Collection<ChessMove> moves = validMoves(from);
         if (!moves.contains(move)){throw new InvalidMoveException("illegal move!");}
+        myBoard.resetBoard();
+        myBoard.addPiece(from,null);
+        // checking if it's a promotion
+        if (movingPiece.getPieceType()== ChessPiece.PieceType.PAWN){
+            if (move.promotionPiece() != null){
+                if (to.row()==8){ }
+                if (to.row() == 1){}
+            }
+        }
     }
     // method to get the location of the king to see if it's in check
     private ChessPosition findKing(TeamColor teamColor){
