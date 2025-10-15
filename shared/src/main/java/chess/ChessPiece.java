@@ -84,15 +84,7 @@ public class ChessPiece {
                     { 2, 1}, { 2,-1}, {-2, 1}, {-2,-1},
                     { 1, 2}, { 1,-2}, {-1, 2}, {-1,-2}
             };
-            for (int[] m : move){
-                int r =r0+ m[0] ;
-                int c = c0 + m[1];
-                if (!in(r, c)) continue;
-                ChessPiece occ = at(board, r,c);
-                if (occ == null || occ.getTeamColor() != me) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
-                }
-            }
+            moveToOneDirection(board, myPosition, move, r0, c0, me, moves);
         }
         // for KINGS: move 1 square in any direction
         if (this.getPieceType() == PieceType.KING){
@@ -100,37 +92,14 @@ public class ChessPiece {
                     { 1, 0}, {-1, 0}, {0, 1}, {0,-1},
                     { 1, 1}, { 1,-1}, {-1, 1}, {-1,-1}
             };
-            for (int[] m: move){
-                int r =r0+ m[0], c = c0 + m[1];
-                if (!in(r, c)) continue;
-                ChessPiece occ = at(board, r,c);
-                if (occ == null || occ.getTeamColor() != me) {
-                    moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
-                }
-            }
+            moveToOneDirection(board, myPosition, move, r0, c0, me, moves);
         }
         // BISHOP: slide on diagonals
         if (this.getPieceType() == PieceType.BISHOP) {
             int[][] dirs = {
                     {1,1}, {1,-1}, {-1,1}, {-1,-1}
             };
-            for (int[] d : dirs) {
-                int r = r0 + d[0], c = c0 + d[1];
-                while (in(r, c)) {
-                    ChessPiece occ = at(board, r, c);
-                    ChessPosition to = new ChessPosition(r, c);
-                    if (occ == null) {
-                        moves.add(new ChessMove(myPosition, to, null));
-                    }
-                    else {
-                        if (occ.getTeamColor() != me) {
-                            moves.add(new ChessMove(myPosition, to, null));
-                        }
-                        break;
-                    }
-                    r += d[0]; c += d[1];
-                }
-            }
+            moveToMethod(board, myPosition, dirs, r0, c0, moves, me);
         }
 
         // ROOK: slide orthogonally
@@ -138,22 +107,7 @@ public class ChessPiece {
             int[][] dirs = {
                     {1,0}, {-1,0}, {0,1}, {0,-1}
             };
-            for (int[] d : dirs) {
-                int r = r0 + d[0], c = c0 + d[1];
-                while (in(r, c)) {
-                    ChessPiece occ = at(board, r, c);
-                    ChessPosition to = new ChessPosition(r, c);
-                    if (occ == null) {
-                        moves.add(new ChessMove(myPosition, to, null));
-                    } else {
-                        if (occ.getTeamColor() != me) {
-                            moves.add(new ChessMove(myPosition, to, null));
-                        }
-                        break;
-                    }
-                    r += d[0]; c += d[1];
-                }
-            }
+            moveToMethod(board, myPosition, dirs, r0, c0, moves, me);
         }
 
         // QUEEN: rook + bishop directions
@@ -162,22 +116,7 @@ public class ChessPiece {
                     {1,1}, {1,-1}, {-1,1}, {-1,-1},
                     {1,0}, {-1,0}, {0,1}, {0,-1}
             };
-            for (int[] d : dirs) {
-                int r = r0 + d[0], c = c0 + d[1];
-                while (in(r, c)) {
-                    ChessPiece occ = at(board, r, c);
-                    ChessPosition to = new ChessPosition(r, c);
-                    if (occ == null) {
-                        moves.add(new ChessMove(myPosition, to, null));
-                    } else {
-                        if (occ.getTeamColor() != me) {
-                            moves.add(new ChessMove(myPosition, to, null));
-                        }
-                        break;
-                    }
-                    r += d[0]; c += d[1];
-                }
-            }
+            moveToMethod(board, myPosition, dirs, r0, c0, moves, me);
         }
 
         // PAWN
@@ -210,36 +149,61 @@ public class ChessPiece {
             int cl = c0 - 1;
             if (in(r, cl)) {
                 ChessPiece occ = at(board, r, cl);
-                if (occ != null && occ.getTeamColor() != me) {
-                    ChessPosition to = new ChessPosition(r, cl);
-                    if ((me == ChessGame.TeamColor.WHITE && r == 8) || (me == ChessGame.TeamColor.BLACK && r == 1)) {
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.ROOK));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.KNIGHT));
-                    }else {
-                        moves.add(new ChessMove(myPosition, to, null));
-                    }
-                }
+                promotion(myPosition, occ, me, r, cl, moves);
             }
             // right
             int cr = c0 + 1;
             if (in(r, cr)) {
                 ChessPiece occ = at(board, r, cr);
-                if (occ != null && occ.getTeamColor() != me) {
-                    ChessPosition to = new ChessPosition(r, cr);
-                    if ((me == ChessGame.TeamColor.WHITE && r == 8) ||
-                            (me == ChessGame.TeamColor.BLACK && r == 1)) {
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.ROOK));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.BISHOP));
-                        moves.add(new ChessMove(myPosition, to, ChessPiece.PieceType.KNIGHT));
-                    } else {
-                        moves.add(new ChessMove(myPosition, to, null));
-                    }
-                }
+                promotion(myPosition, occ, me, r, cr, moves);
             }
         }
         return moves;
+    }
+
+    private void moveToOneDirection(ChessBoard board, ChessPosition myPosition, int[][] move, int r0, int c0, ChessGame.TeamColor me, ArrayList<ChessMove> moves) {
+        for (int[] m : move){
+            int r = r0 + m[0] ;
+            int c = c0 + m[1];
+            if (!in(r, c)) continue;
+            ChessPiece occ = at(board, r,c);
+            if (occ == null || occ.getTeamColor() != me) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(r, c), null));
+            }
+        }
+    }
+
+    private static void promotion(ChessPosition myPosition, ChessPiece occ, ChessGame.TeamColor me, int r, int cr, ArrayList<ChessMove> moves) {
+        if (occ != null && occ.getTeamColor() != me) {
+            ChessPosition to = new ChessPosition(r, cr);
+            if ((me == ChessGame.TeamColor.WHITE && r == 8) ||
+                    (me == ChessGame.TeamColor.BLACK && r == 1)) {
+                moves.add(new ChessMove(myPosition, to, PieceType.QUEEN));
+                moves.add(new ChessMove(myPosition, to, PieceType.ROOK));
+                moves.add(new ChessMove(myPosition, to, PieceType.BISHOP));
+                moves.add(new ChessMove(myPosition, to, PieceType.KNIGHT));
+            } else {
+                moves.add(new ChessMove(myPosition, to, null));
+            }
+        }
+    }
+
+    private void moveToMethod(ChessBoard board, ChessPosition myPosition, int[][] dirs, int r0, int c0, ArrayList<ChessMove> moves, ChessGame.TeamColor me) {
+        for (int[] d : dirs) {
+            int r = r0 + d[0], c = c0 + d[1];
+            while (in(r, c)) {
+                ChessPiece occ = at(board, r, c);
+                ChessPosition to = new ChessPosition(r, c);
+                if (occ == null) {
+                    moves.add(new ChessMove(myPosition, to, null));
+                } else {
+                    if (occ.getTeamColor() != me) {
+                        moves.add(new ChessMove(myPosition, to, null));
+                    }
+                    break;
+                }
+                r += d[0]; c += d[1];
+            }
+        }
     }
 }
