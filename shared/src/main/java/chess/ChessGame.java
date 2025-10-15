@@ -155,7 +155,18 @@ public class ChessGame {
         //The king is in check: It is being attacked by an opponent's piece.
         //No legal escape for the king: The king cannot move to a safe square.
         //No blocking or capturing the attacker: The attacking piece cannot be captured, and no other piece can be moved to block the attack.
-        return isInCheck(teamColor);
+        if (!isInCheck(teamColor)){return false;}
+        for (int r = 1; r <=8; r++){
+            for (int c=1; c<=8; c++){
+                ChessPosition pos =new ChessPosition(r,c);
+                ChessPiece p = myBoard.getPiece(pos);
+                if(p!= null && p.getTeamColor()== teamColor){
+                    var moves = validMoves(pos);
+                    if(moves!= null && !moves.isEmpty()){return false;}
+                }
+            }
+        }
+        return true;
     }
 
     /**
