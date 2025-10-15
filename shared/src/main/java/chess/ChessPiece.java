@@ -74,7 +74,7 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> moves = new ArrayList<>();
-        final int r0 = myPosition.row();
+        final int r0 = myPosition.getRow();
         final int c0 = myPosition.getColumn();
         final ChessGame.TeamColor me = this.getTeamColor();
 

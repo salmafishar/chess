@@ -20,7 +20,7 @@ public class ChessBoard implements Cloneable {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition pos, ChessPiece piece){
-    squares[pos.row()-1][pos.getColumn()-1] =piece;
+    squares[pos.getRow()-1][pos.getColumn()-1] =piece;
     }
     /**
      * Gets a chess piece on the chessboard
@@ -30,7 +30,7 @@ public class ChessBoard implements Cloneable {
      * pos
      */
     public ChessPiece getPiece(ChessPosition pos) {
-    var row = pos.row()-1;
+    var row = pos.getRow()-1;
     var col =pos.getColumn()-1;
     return squares[row] [col];
     }

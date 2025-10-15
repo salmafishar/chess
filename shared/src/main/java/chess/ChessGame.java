@@ -65,11 +65,11 @@ public class ChessGame{
             temp.addPiece(startPosition,null);
 
             ChessPiece moved;
-            if(piece.getPieceType() == ChessPiece.PieceType.PAWN && m.promotionPiece()!= null){
-                 moved = new ChessPiece(piece.getTeamColor(),m.promotionPiece());
+            if(piece.getPieceType() == ChessPiece.PieceType.PAWN && m.getPromotionPiece()!= null){
+                 moved = new ChessPiece(piece.getTeamColor(),m.getPromotionPiece());
             }
             else { moved = new ChessPiece(piece.getTeamColor(),piece.getPieceType());}
-            temp.addPiece(m.endPosition(),moved);
+            temp.addPiece(m.getEndPosition(),moved);
             if(!isOnBoard(piece.getTeamColor(),temp)){
                 allowed.add(m);}
         }
@@ -89,7 +89,7 @@ public class ChessGame{
                 ChessPiece piece = board.getPiece(position);
                 if (piece!= null && piece.getTeamColor() == opp){
                     for (ChessMove m: piece.pieceMoves(board, position)){
-                        if(m.endPosition().equals(kingPos)){return true;}
+                        if(m.getEndPosition().equals(kingPos)){return true;}
                     }
                 }
             }
@@ -122,8 +122,8 @@ public class ChessGame{
          * 3. call validMoves
          */
         // remove the piece from `from`, place it at `to`, checking promotion, flipping teamTurn
-        ChessPosition from = move.startPosition();
-        ChessPosition to = move.endPosition();
+        ChessPosition from = move.getStartPosition();
+        ChessPosition to = move.getEndPosition();
         ChessPiece movingPiece = myBoard.getPiece(from);
 
         if (movingPiece == null) {
@@ -137,10 +137,10 @@ public class ChessGame{
         myBoard.addPiece(from,null);
         // checking if it's a promotion
         if (movingPiece.getPieceType()== ChessPiece.PieceType.PAWN){
-            if (move.promotionPiece() != null){
-               if((movingPiece.getTeamColor() == TeamColor.WHITE && to.row()== 8)
-               ||(movingPiece.getTeamColor() == TeamColor.BLACK && to.row()== 1)){
-                   myBoard.addPiece(to,new ChessPiece(movingPiece.getTeamColor(),move.promotionPiece()));
+            if (move.getPromotionPiece() != null){
+               if((movingPiece.getTeamColor() == TeamColor.WHITE && to.getRow()== 8)
+               ||(movingPiece.getTeamColor() == TeamColor.BLACK && to.getRow()== 1)){
+                   myBoard.addPiece(to,new ChessPiece(movingPiece.getTeamColor(),move.getPromotionPiece()));
                }
             }
             else {myBoard.addPiece(to,movingPiece);}
@@ -182,7 +182,7 @@ public class ChessGame{
                 ChessPiece piece = myBoard.getPiece(position);
                 if (piece!= null && piece.getTeamColor() == opp){
                     for (ChessMove m: piece.pieceMoves(myBoard, position)){
-                        if(m.endPosition().equals(kingPos)){return true;}
+                        if(m.getEndPosition().equals(kingPos)){return true;}
                     }
                 }
             }
