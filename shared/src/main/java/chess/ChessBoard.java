@@ -6,7 +6,7 @@ package chess;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable {
 
      ChessPiece [] [] squares = new ChessPiece[8][8];
     public ChessBoard() {
@@ -78,5 +78,24 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return java.util.Arrays.deepHashCode(this.squares);
+    }
+
+    @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard clone = (ChessBoard) super.clone(); // shallow copy
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            for (int r =0; r <= 8; r++){
+                for(int c =0; c <= 8; c++){
+                    ChessPosition position = new ChessPosition(r,c);
+                    ChessPiece piece = this.getPiece(position);
+                    clone.addPiece(position,
+                            (piece == null)? null : new ChessPiece(piece.getTeamColor(),piece.getPieceType()));
+                }
+            }
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
