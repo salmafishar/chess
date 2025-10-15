@@ -82,20 +82,19 @@ public class ChessBoard implements Cloneable {
 
     @Override
     public ChessBoard clone() {
-        try {
-            ChessBoard clone = (ChessBoard) super.clone(); // shallow copy
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            for (int r =0; r <= 8; r++){
-                for(int c =0; c <= 8; c++){
-                    ChessPosition position = new ChessPosition(r,c);
-                    ChessPiece piece = this.getPiece(position);
-                    clone.addPiece(position,
-                            (piece == null)? null : new ChessPiece(piece.getTeamColor(),piece.getPieceType()));
+        ChessBoard clone = new ChessBoard();
+        // new backing array (already created in constructor)
+        for (int r = 1; r <= 8; r++) {
+            for (int c = 1; c <= 8; c++) {
+                ChessPiece p = this.getPiece(new ChessPosition(r, c));
+                if (p != null) {
+                    clone.addPiece(new ChessPosition(r, c),
+                            new ChessPiece(p.getTeamColor(), p.getPieceType()));
+                } else {
+                    clone.addPiece(new ChessPosition(r, c), null);
                 }
             }
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
         }
+        return clone;
     }
 }

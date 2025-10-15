@@ -56,13 +56,59 @@ public class ChessGame{
         if (piece == null){
             return null;
         }
-        var pseudo = piece.pieceMoves(myBoard,startPosition);
-        var legal = new java.util.ArrayList<ChessMove>(pseudo.size());
+        var test = piece.pieceMoves(myBoard,startPosition);
+        var allowed = new java.util.ArrayList<ChessMove>();
+        if(test == null || test.isEmpty()){return allowed;}
 
-        // valid moves:
-        return piece.pieceMoves(myBoard,startPosition);
+        for(ChessMove m: test){
+            ChessBoard temp = myBoard.clone();
+            temp.addPiece(startPosition,null);
 
+            ChessPiece moved;
+            if(piece.getPieceType() == ChessPiece.PieceType.PAWN && m.promotionPiece()!= null){
+                 moved = new ChessPiece(piece.getTeamColor(),m.promotionPiece());
+            }
+            else { moved = new ChessPiece(piece.getTeamColor(),piece.getPieceType());}
+            temp.addPiece(m.endPosition(),moved);
+            if(!isOnBoard(piece.getTeamColor(),temp)){
+                allowed.add(m);}
+        }
+        return allowed;
     }
+
+    private boolean isOnBoard(TeamColor teamColor, ChessBoard board) {
+        ChessPosition kingPos = findKingonBoard(teamColor,board);
+        if (kingPos ==null) {return false;}
+        TeamColor opp = teamColor;
+        if (teamColor == TeamColor.WHITE) {opp= TeamColor.BLACK;}
+        else if (teamColor == TeamColor.BLACK){opp =TeamColor.WHITE;}
+
+        for (int r = 1; r <=8; r++){
+            for (int c=1; c<=8; c++){
+                ChessPosition position = new ChessPosition(r,c);
+                ChessPiece piece = board.getPiece(position);
+                if (piece!= null && piece.getTeamColor() == opp){
+                    for (ChessMove m: piece.pieceMoves(board, position)){
+                        if(m.endPosition().equals(kingPos)){return true;}
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private ChessPosition findKingonBoard(TeamColor teamColor, ChessBoard board) {
+        for (int r = 1; r <=8; r++){
+            for (int c=1; c<=8; c++){
+                ChessPosition position =new ChessPosition(r,c);
+                ChessPiece piece = board.getPiece(position);
+                if (piece !=null && piece.getTeamColor() == teamColor &&piece.getPieceType()== ChessPiece.PieceType.KING){
+                    return position;}
+            }
+        }
+        return null;
+    }
+
     /**
      * Makes a move in a chess game
      *
