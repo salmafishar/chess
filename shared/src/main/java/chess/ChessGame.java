@@ -8,7 +8,7 @@ import java.util.Collection;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessGame {
+public class ChessGame implements Cloneable{
 
     private ChessBoard myBoard;
     private TeamColor teamTurn;
@@ -62,6 +62,29 @@ public class ChessGame {
         // valid moves:
         return piece.pieceMoves(myBoard,startPosition);
 
+    }
+
+    @Override
+    protected ChessBoard clone() throws CloneNotSupportedException {
+        try{
+            ChessBoard copy = (ChessBoard) super.clone(); // shallow copy
+            // deep-copy
+            for (int r = 1; r <= 8; r++) {
+                for (int c = 1; c <= 8; c++) {
+                    ChessPiece piece = this.getBoard().getPiece(new ChessPosition(r, c));
+                    if (piece != null) {
+                        copy.addPiece(new ChessPosition(r, c),
+                                new ChessPiece(piece.getTeamColor(), piece.getPieceType()));
+                    } else {
+                        copy.addPiece(new ChessPosition(r, c), null);
+                    }
+                }
+            }
+            return copy;
+        }
+        catch (CloneNotSupportedException e){
+            throw new RuntimeException(e);
+        }
     }
 
     /**
