@@ -36,6 +36,7 @@ public class ChessPosition {
     public String toString() {
         return String.format("[%d,%d]", row, col);
     }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ChessPosition that)) {
@@ -43,11 +44,12 @@ public class ChessPosition {
         }
         return row == that.row && col == that.col;
     }
+
     @Override
     public int hashCode() {
         int result = 17;
         result = 31 * result + row;
-        result=  31 * result +col;
+        result = 31 * result + col;
         return result;
     }
 
