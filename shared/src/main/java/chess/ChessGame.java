@@ -82,7 +82,7 @@ public class ChessGame {
     }
 
     private boolean isOnBoard(TeamColor teamColor, ChessBoard board) {
-        ChessPosition kingPos = findKingonBoard(teamColor, board);
+        ChessPosition kingPos = findKingOnBoard(teamColor, board);
         if (kingPos == null) {
             return false;
         }
@@ -109,7 +109,7 @@ public class ChessGame {
         return false;
     }
 
-    private ChessPosition findKingonBoard(TeamColor teamColor, ChessBoard board) {
+    private ChessPosition findKingOnBoard(TeamColor teamColor, ChessBoard board) {
         for (int r = 1; r <= 8; r++) {
             for (int c = 1; c <= 8; c++) {
                 ChessPosition position = new ChessPosition(r, c);
@@ -129,11 +129,6 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        /**
-         * 1.set basic from, to and movingPiece
-         * 2.check null and teamTurn >> throw exceptions
-         * 3. call validMoves
-         */
         // remove the piece from `from`, place it at `to`, checking promotion, flipping teamTurn
         ChessPosition from = move.getStartPosition();
         ChessPosition to = move.getEndPosition();
