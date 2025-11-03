@@ -1,46 +1,47 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
+import dataaccess.*;
 import io.javalin.http.Context;
-import io.javalin.http.Handler;
 import service.UserService;
 import service.requests.RegisterRequest;
+import service.results.RegisterResult;
 
 import java.util.Map;
 
-public class RegisterHandler implements Handler {
-    private final UserService userService;
-    private Gson gson = new Gson();
 
-    public RegisterHandler(UserService userService) {
-        this.userService = userService;
+// request -> name, password, email
+// result ->name, token
+
+public class RegisterHandler {
+    private final Gson gson;
+    private final UserService user;
+
+    public RegisterHandler(Gson gson, UserService user) {
+        this.gson = gson;
+        this.user = user;
     }
 
-    @Override
-    public void handle(Context ctx) throws Exception {
+    // handler, reads JSON, call server, write JSON, map errors
+    public void register(Context ctx) {
         try {
-            RegisterRequest request = gson.fromJson(ctx.body(), RegisterRequest.class);
-            var result = userService.register(request);
-            ctx.status(200);
-            ctx.contentType("application/json");
-            ctx.result(gson.toJson(result));
-
+            var request = gson.fromJson(ctx.body(), RegisterRequest.class);// name, pass, email
+            var result = user.register(request);
+            ctx.status(200).contentType("application/json").
+                    result(gson.toJson(result, RegisterResult.class));
         } catch (DataAccessException e) {
-            String message = e.getMessage();
+            String message = e.getMessage().toLowerCase();
             if (message.contains("bad request")) {
                 ctx.status(400).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: bad request")));
-            } else if (message.toLowerCase().contains("already taken")) {
+            } else if (message.contains("already")) {
                 ctx.status(403).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: already taken")));
             } else {
                 ctx.status(500).contentType("application/json")
-                        .result(gson.toJson(Map.of("message", "Error: " + e.getMessage())));
+                        .result(gson.toJson(Map.of("message", "Error: " + message)));
             }
-        } catch (Exception e) {
-            ctx.status(500).contentType("application/json")
-                    .result(gson.toJson(Map.of("message", "Error: " + e.getMessage())));
         }
+
     }
 }
