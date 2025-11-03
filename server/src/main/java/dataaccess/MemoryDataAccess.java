@@ -37,9 +37,6 @@ public class MemoryDataAccess implements DataAccess {
 
     @Override
     public void createAuth(AuthData token) throws DataAccessException {
-        if (auths.containsKey(token.authToken())) {
-            throw new DataAccessException("Authorization already exists");
-        }
         auths.put(token.authToken(), token);
     }
 
