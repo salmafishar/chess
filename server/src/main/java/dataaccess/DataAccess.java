@@ -9,15 +9,15 @@ public interface DataAccess {
 
     void createUser(UserData u) throws DataAccessException;
 
-    UserData getUser(UserData u) throws DataAccessException;
+    UserData getUser(String username) throws DataAccessException;
 
-    void createGame(String username) throws DataAccessException;
+    int createGame(GameData game) throws DataAccessException;
 
     GameData getGame(int gameID) throws DataAccessException;
 
     Collection<GameData> listGames() throws DataAccessException;
 
-    void updateGame(GameData g) throws DataAccessException;
+    void updateGame(GameData game) throws DataAccessException;
 
     void createAuth(AuthData token) throws DataAccessException;
 
