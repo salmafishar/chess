@@ -4,7 +4,7 @@ import chess.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+
 
 /*
 move in straight lines and diagonals as far as there is open space.
