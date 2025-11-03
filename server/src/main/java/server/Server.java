@@ -29,9 +29,9 @@ public class Server {
             ctx.status(200).
                     contentType("application/json").result("{}");
         });
-        javalin.post("/user", registerHandler);
-        javalin.post("/session", loginHandler);
-        javalin.delete("/session", logoutHandler);
+        javalin.post("/user", registerHandler::register);
+        javalin.post("/session", loginHandler::login);
+        javalin.delete("/session", logoutHandler::logout);
         javalin.get("/game", listHandler);
         javalin.post("/game", createHandler);
         javalin.put("/game", joinHandler);
