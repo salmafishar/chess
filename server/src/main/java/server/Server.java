@@ -1,6 +1,10 @@
 package server;
 
+import dataaccess.MemoryDataAccess;
+import server.handlers.*;
 import io.javalin.*;
+import service.GameService;
+import service.UserService;
 
 public class Server {
 
@@ -10,7 +14,27 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-
+        var dao = new MemoryDataAccess();
+        var userService = new UserService(dao);
+        var gameService = new GameService(dao);
+        var registerHandler = new RegisterHandler(userService);
+        var loginHandler = new LoginHandler(userService);
+        var logoutHandler = new LogoutHandler(userService);
+        var listHandler = new ListGamesHandler(gameService);
+        var createHandler = new CreateGamesHandler(gameService);
+        var joinHandler = new JoinGameHandler(gameService);
+        // endpoints
+        javalin.delete("/db", ctx -> {
+            dao.clear();
+            ctx.status(200).
+                    contentType("application/json").result("{}");
+        });
+        javalin.post("/user", registerHandler);
+        javalin.post("/session", loginHandler);
+        javalin.delete("/session", logoutHandler);
+        javalin.get("/game", listHandler);
+        javalin.post("/game", createHandler);
+        javalin.put("/game", joinHandler);
     }
 
     public int run(int desiredPort) {
