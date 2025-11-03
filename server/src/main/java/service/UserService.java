@@ -11,9 +11,6 @@ import model.UserData;
 import service.requests.*;
 import service.results.*;
 
-import java.util.UUID;
-
-
 public class UserService {
     private final DataAccess dataAccess;
 
@@ -51,6 +48,13 @@ public class UserService {
         return new LoginResult(request.username(), token);
     }
 
-    public void logout(LogoutRequest logoutRequest) {
+    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
+        var token = dataAccess.getAuth(logoutRequest.authToken());
+
+        if (logoutRequest.authToken() == null || !token.authToken().equals(logoutRequest.authToken())) {
+            throw new DataAccessException("unauthorized");
+        }
+        dataAccess.deleteAuth(logoutRequest.authToken());
+        return new LogoutResult();
     }
 }
