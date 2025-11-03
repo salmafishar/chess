@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.MemoryDataAccess;
 import server.handlers.*;
 import io.javalin.*;
@@ -20,7 +21,7 @@ public class Server {
         var registerHandler = new RegisterHandler(new Gson(), userService);
         var loginHandler = new LoginHandler(new Gson(), userService);
         var logoutHandler = new LogoutHandler(new Gson(), userService);
-        var listHandler = new ListGamesHandler(gameService);
+        var listHandler = new ListGamesHandler(new Gson(), gameService);
         var createHandler = new CreateGamesHandler(gameService);
         var joinHandler = new JoinGameHandler(gameService);
         // endpoints
@@ -32,7 +33,7 @@ public class Server {
         javalin.post("/user", registerHandler::register);
         javalin.post("/session", loginHandler::login);
         javalin.delete("/session", logoutHandler::logout);
-        javalin.get("/game", listHandler);
+        javalin.get("/game", listHandler::list);
         javalin.post("/game", createHandler);
         javalin.put("/game", joinHandler);
     }

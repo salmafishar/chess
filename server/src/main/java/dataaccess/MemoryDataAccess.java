@@ -58,7 +58,7 @@ public class MemoryDataAccess implements DataAccess {
     public int createGame(GameData game) throws DataAccessException {
         int id = nextGameId++;
         var newGame = new GameData(id, game.whiteUsername(),
-                game.blackUsername(), game.gameName(), game.game());
+                game.blackUsername(), game.gameName());
         games.put(id, newGame);
         return id;
     }
