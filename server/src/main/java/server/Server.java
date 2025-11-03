@@ -17,9 +17,9 @@ public class Server {
         var dao = new MemoryDataAccess();
         var userService = new UserService(dao);
         var gameService = new GameService(dao);
-        var registerHandler = new RegisterHandler(userService);
-        var loginHandler = new LoginHandler(userService);
-        var logoutHandler = new LogoutHandler(userService);
+        var registerHandler = new RegisterHandler(new Gson(), userService);
+        var loginHandler = new LoginHandler(new Gson(), userService);
+        var logoutHandler = new LogoutHandler(new Gson(), userService);
         var listHandler = new ListGamesHandler(gameService);
         var createHandler = new CreateGamesHandler(gameService);
         var joinHandler = new JoinGameHandler(gameService);
