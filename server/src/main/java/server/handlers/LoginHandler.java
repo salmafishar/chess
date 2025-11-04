@@ -21,10 +21,10 @@ public class LoginHandler {
     public void login(Context ctx) {
         try {
             var req = gson.fromJson(ctx.body(), LoginRequest.class);// name, pass, email
-            var result = user.login(req);
+            var res = user.login(req);
 
             ctx.status(200).contentType("application/json").
-                    result(gson.toJson(result, LoginResult.class));
+                    result(gson.toJson(res, LoginResult.class));
         } catch (DataAccessException e) {
             String message = e.getMessage().toLowerCase();
             if (message.contains("bad request")) {

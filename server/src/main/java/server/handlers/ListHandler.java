@@ -26,13 +26,13 @@ public class ListHandler {
             ctx.status(200).contentType("application/json").
                     result(gson.toJson(res, ListResult.class));
         } catch (DataAccessException e) {
-            String message = e.getMessage().toLowerCase();
-            if (message.contains("unauthorized")) {
+            String m = e.getMessage().toLowerCase();
+            if (m.contains("unauthorized")) {
                 ctx.status(401).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: unauthorized")));
             } else {
                 ctx.status(500).contentType("application/json")
-                        .result(gson.toJson(Map.of("message", "Error: " + message)));
+                        .result(gson.toJson(Map.of("message", "Error: " + m)));
             }
         } catch (Exception e) {
             ctx.status(500).contentType("application/json")

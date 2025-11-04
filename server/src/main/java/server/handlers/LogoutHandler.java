@@ -20,18 +20,18 @@ public class LogoutHandler {
     public void logout(Context ctx) {
         try {
             String token = ctx.header("authorization");
-            var request = new LogoutRequest(token);
-            user.logout(request);
+            var req = new LogoutRequest(token);
+            user.logout(req);
             ctx.status(200).contentType("application/json").
                     result("{}");
         } catch (DataAccessException e) {
-            String message = e.getMessage().toLowerCase();
-            if (message.contains("unauthorized")) {
+            String m = e.getMessage().toLowerCase();
+            if (m.contains("unauthorized")) {
                 ctx.status(401).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: unauthorized")));
             } else {
                 ctx.status(500).contentType("application/json")
-                        .result(gson.toJson(Map.of("message", "Error: " + message)));
+                        .result(gson.toJson(Map.of("message", "Error: " + m)));
             }
         }
     }

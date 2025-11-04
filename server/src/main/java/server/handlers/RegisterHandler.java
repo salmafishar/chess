@@ -25,10 +25,10 @@ public class RegisterHandler {
     // handler, reads JSON, call server, write JSON, map errors
     public void register(Context ctx) {
         try {
-            var request = gson.fromJson(ctx.body(), RegisterRequest.class);// name, pass, email
-            var result = user.register(request);
+            var req = gson.fromJson(ctx.body(), RegisterRequest.class);// name, pass, email
+            var res = user.register(req);
             ctx.status(200).contentType("application/json").
-                    result(gson.toJson(result, RegisterResult.class));
+                    result(gson.toJson(res, RegisterResult.class));
         } catch (DataAccessException e) {
             String message = e.getMessage().toLowerCase();
             if (message.contains("bad request")) {
