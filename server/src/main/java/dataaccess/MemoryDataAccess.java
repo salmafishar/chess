@@ -74,7 +74,13 @@ public class MemoryDataAccess implements DataAccess {
 
     @Override
     public Collection<GameData> listGames() throws DataAccessException {
-        return new ArrayList<>(games.values());
+        var out = new ArrayList<GameData>();
+        for (var g : games.values()) {
+            if (g != null) {
+                out.add(g);
+            }
+        }
+        return out;
     }
 
     @Override
