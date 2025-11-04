@@ -6,6 +6,9 @@ import server.handlers.*;
 import io.javalin.*;
 import service.GameService;
 import service.UserService;
+import io.javalin.http.Context;
+
+import java.util.Map;
 
 public class Server {
 
@@ -22,8 +25,8 @@ public class Server {
         var loginHandler = new LoginHandler(new Gson(), userService);
         var logoutHandler = new LogoutHandler(new Gson(), userService);
         var listHandler = new ListGamesHandler(new Gson(), gameService);
-        var createHandler = new CreateGamesHandler(gameService);
-        var joinHandler = new JoinGameHandler(gameService);
+        var createHandler = new CreateGamesHandler(new Gson(), gameService);
+        var joinHandler = new JoinGameHandler(new Gson(), gameService);
         // endpoints
         javalin.delete("/db", ctx -> {
             dao.clear();
@@ -34,8 +37,9 @@ public class Server {
         javalin.post("/session", loginHandler::login);
         javalin.delete("/session", logoutHandler::logout);
         javalin.get("/game", listHandler::list);
-        javalin.post("/game", createHandler);
-        javalin.put("/game", joinHandler);
+        javalin.post("/game", createHandler::createGame);
+        javalin.put("/game", joinHandler::join);
+        javalin.exception(Exception.class, this::exceptionHandler);
     }
 
     private static final Gson GSON = new Gson();
