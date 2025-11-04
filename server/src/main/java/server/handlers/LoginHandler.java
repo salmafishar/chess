@@ -20,8 +20,8 @@ public class LoginHandler {
 
     public void login(Context ctx) {
         try {
-            var request = gson.fromJson(ctx.body(), LoginRequest.class);// name, pass, email
-            var result = user.login(request);
+            var req = gson.fromJson(ctx.body(), LoginRequest.class);// name, pass, email
+            var result = user.login(req);
 
             ctx.status(200).contentType("application/json").
                     result(gson.toJson(result, LoginResult.class));

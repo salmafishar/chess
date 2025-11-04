@@ -18,43 +18,40 @@ public class UserService {
         this.dataAccess = dataAccess;
     }
 
-    public void clear() throws DataAccessException {
-        dataAccess.clear();
-    }
 
     //takes a name and a password, if it matches, returns a 200 response with username and authToken
     // if it doesn't ,match a name, 3 error messages
-    public RegisterResult register(RegisterRequest request) throws DataAccessException {
-        if (request == null || request.username() == null ||
-                request.email() == null || request.password() == null) {
+    public RegisterResult register(RegisterRequest req) throws DataAccessException {
+        if (req == null || req.username() == null ||
+                req.email() == null || req.password() == null) {
             throw new DataAccessException("bad request");
         }
-        dataAccess.createUser(new UserData(request.username(), request.password(), request.email()));
-        String token = java.util.UUID.randomUUID().toString();
-        dataAccess.createAuth(new AuthData(token, request.username()));
-        return new RegisterResult(request.username(), token);
+        dataAccess.createUser(new UserData(req.username(), req.password(), req.email()));
+        String t = java.util.UUID.randomUUID().toString();
+        dataAccess.createAuth(new AuthData(t, req.username()));
+        return new RegisterResult(req.username(), t);
     }
 
-    public LoginResult login(LoginRequest request) throws DataAccessException {
-        if (request == null || request.username() == null || request.password() == null) {
+    public LoginResult login(LoginRequest req) throws DataAccessException {
+        if (req == null || req.username() == null || req.password() == null) {
             throw new DataAccessException("bad request");
         }
-        var user = dataAccess.getUser(request.username());
-        if (!user.password().equals(request.password())) {
+        var u = dataAccess.getUser(req.username());
+        if (!u.password().equals(req.password())) {
             throw new DataAccessException("unauthorized");
         }
-        String token = java.util.UUID.randomUUID().toString();
-        dataAccess.createAuth(new AuthData(token, request.username()));
-        return new LoginResult(request.username(), token);
+        String t = java.util.UUID.randomUUID().toString();
+        dataAccess.createAuth(new AuthData(t, req.username()));
+        return new LoginResult(req.username(), t);
     }
 
-    public LogoutResult logout(LogoutRequest logoutRequest) throws DataAccessException {
-        var token = dataAccess.getAuth(logoutRequest.authToken());
+    public LogoutResult logout(LogoutRequest req) throws DataAccessException {
+        var t = dataAccess.getAuth(req.authToken());
 
-        if (logoutRequest.authToken() == null || !token.authToken().equals(logoutRequest.authToken())) {
+        if (req.authToken() == null || !t.authToken().equals(req.authToken())) {
             throw new DataAccessException("unauthorized");
         }
-        dataAccess.deleteAuth(logoutRequest.authToken());
+        dataAccess.deleteAuth(req.authToken());
         return new LogoutResult();
     }
 }

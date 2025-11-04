@@ -37,21 +37,21 @@ public class JoinHandler {
                 }
             }
 
-            var request = new JoinRequest(token, gameID, playerColor);
-            service.joinGame(request);
+            var req = new JoinRequest(token, gameID, playerColor);
+            service.joinGame(req);
 
             ctx.status(200).contentType("application/json").result("{}");
 
         } catch (DataAccessException e) {
-            String message = e.getMessage().toLowerCase();
+            String m = e.getMessage().toLowerCase();
 
-            if (message.contains("bad request")) {
+            if (m.contains("bad request")) {
                 ctx.status(400).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: bad request")));
-            } else if (message.contains("unauthorized")) {
+            } else if (m.contains("unauthorized")) {
                 ctx.status(401).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: unauthorized")));
-            } else if (message.contains("already taken")) {
+            } else if (m.contains("already taken")) {
                 ctx.status(403).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: already taken")));
             } else {

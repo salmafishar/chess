@@ -7,12 +7,8 @@ After performing its purpose, it returns a corresponding Result object containin
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.GameData;
-import service.requests.CreateRequest;
-import service.requests.JoinRequest;
-import service.requests.ListGameRequest;
-import service.results.CreateResult;
-import service.results.JoinResult;
-import service.results.ListResult;
+import service.results.*;
+import service.requests.*;
 
 import java.util.ArrayList;
 
@@ -26,7 +22,7 @@ public class GameService {
     // Note that whiteUsername and blackUsername may be null.
     // request -> authToken
     // result -> java.util.Collection<model.GameData> games
-    public ListResult listGames(ListGameRequest request) throws DataAccessException {
+    public ListResult listGames(ListRequest request) throws DataAccessException {
         dataAccess.getAuth(request.authToken());
         var allGames = dataAccess.listGames();
         var summaries = new ArrayList<GameData>();
@@ -56,8 +52,8 @@ public class GameService {
         if (request.gameID() == null) {
             throw new DataAccessException("bad request");
         }
-        var game = dataAccess.getGame(request.gameID());
-        if (game == null) {
+        var g = dataAccess.getGame(request.gameID());
+        if (g == null) {
             throw new DataAccessException("bad request");
         }
         String color = request.playerColor();
@@ -70,14 +66,14 @@ public class GameService {
             throw new DataAccessException("bad request");
         }
         if (color.equals("WHITE")) {
-            game = new GameData(game.gameID(), username, game.blackUsername(), game.gameName());
+            g = new GameData(g.gameID(), username, g.blackUsername(), g.gameName());
         } else {
-            if (game.blackUsername() != null) {
+            if (g.blackUsername() != null) {
                 throw new DataAccessException("already taken");
             }
-            game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName());
+            g = new GameData(g.gameID(), g.whiteUsername(), username, g.gameName());
         }
-        dataAccess.updateGame(game);
+        dataAccess.updateGame(g);
         return new JoinResult();
     }
 }

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import service.GameService;
-import service.requests.ListGameRequest;
+import service.requests.ListRequest;
 import service.results.ListResult;
 
 import java.util.Map;
@@ -21,10 +21,10 @@ public class ListHandler {
     public void list(Context ctx) {
         try {
             String token = ctx.header("authorization");
-            var request = new ListGameRequest(token);
-            var result = game.listGames(request);
+            var req = new ListRequest(token);
+            var res = game.listGames(req);
             ctx.status(200).contentType("application/json").
-                    result(gson.toJson(result, ListResult.class));
+                    result(gson.toJson(res, ListResult.class));
         } catch (DataAccessException e) {
             String message = e.getMessage().toLowerCase();
             if (message.contains("unauthorized")) {

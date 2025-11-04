@@ -23,22 +23,22 @@ public class CreateHandler {
             String token = ctx.header("authorization");
             var body = gson.fromJson(ctx.body(), java.util.Map.class);
             String gameName = (String) body.get("gameName");
-            var request = new CreateRequest(token, gameName);
-            var result = game.createGame(request);
+            var req = new CreateRequest(token, gameName);
+            var res = game.createGame(req);
             ctx.status(200).contentType("application/json").
-                    result(gson.toJson(result, CreateResult.class));
+                    result(gson.toJson(res, CreateResult.class));
         } catch (DataAccessException e) {
-            String message = e.getMessage().toLowerCase();
-            if (message.contains("bad request")) {
+            String m = e.getMessage().toLowerCase();
+            if (m.contains("bad request")) {
                 ctx.status(400).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: bad request")));
-            } else if (message.contains("unauthorized")) {
+            } else if (m.contains("unauthorized")) {
                 ctx.status(401).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: unauthorized")));
             } else {
 
                 ctx.status(500).contentType("application/json")
-                        .result(gson.toJson(Map.of("message", "Error: " + message)));
+                        .result(gson.toJson(Map.of("message", "Error: " + m)));
             }
         }
     }
