@@ -5,15 +5,15 @@ import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import service.GameService;
 import service.requests.ListGameRequest;
-import service.results.ListGamesResult;
+import service.results.ListResult;
 
 import java.util.Map;
 
-public class ListGamesHandler {
+public class ListHandler {
     private final Gson gson;
     private final GameService game;
 
-    public ListGamesHandler(Gson gson, GameService game) {
+    public ListHandler(Gson gson, GameService game) {
         this.gson = gson;
         this.game = game;
     }
@@ -24,7 +24,7 @@ public class ListGamesHandler {
             var request = new ListGameRequest(token);
             var result = game.listGames(request);
             ctx.status(200).contentType("application/json").
-                    result(gson.toJson(result, ListGamesResult.class));
+                    result(gson.toJson(result, ListResult.class));
         } catch (DataAccessException e) {
             String message = e.getMessage().toLowerCase();
             if (message.contains("unauthorized")) {

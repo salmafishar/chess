@@ -4,15 +4,15 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import service.GameService;
-import service.requests.JoinGameRequest;
+import service.requests.JoinRequest;
 
 import java.util.Map;
 
-public class JoinGameHandler {
+public class JoinHandler {
     private final Gson gson;
     private final GameService service;
 
-    public JoinGameHandler(Gson gson, GameService service) {
+    public JoinHandler(Gson gson, GameService service) {
         this.gson = gson;
         this.service = service;
     }
@@ -37,7 +37,7 @@ public class JoinGameHandler {
                 }
             }
 
-            var request = new JoinGameRequest(token, gameID, playerColor);
+            var request = new JoinRequest(token, gameID, playerColor);
             service.joinGame(request);
 
             ctx.status(200).contentType("application/json").result("{}");

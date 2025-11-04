@@ -7,12 +7,12 @@ After performing its purpose, it returns a corresponding Result object containin
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.GameData;
-import service.requests.CreateGameRequest;
-import service.requests.JoinGameRequest;
+import service.requests.CreateRequest;
+import service.requests.JoinRequest;
 import service.requests.ListGameRequest;
-import service.results.CreateGameResult;
-import service.results.JoinGameResult;
-import service.results.ListGamesResult;
+import service.results.CreateResult;
+import service.results.JoinResult;
+import service.results.ListResult;
 
 import java.util.ArrayList;
 
@@ -26,7 +26,7 @@ public class GameService {
     // Note that whiteUsername and blackUsername may be null.
     // request -> authToken
     // result -> java.util.Collection<model.GameData> games
-    public ListGamesResult listGames(ListGameRequest request) throws DataAccessException {
+    public ListResult listGames(ListGameRequest request) throws DataAccessException {
         dataAccess.getAuth(request.authToken());
         var allGames = dataAccess.listGames();
         var summaries = new ArrayList<GameData>();
@@ -34,10 +34,10 @@ public class GameService {
             summaries.add(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(),
                     game.gameName()));
         }
-        return new ListGamesResult(summaries);
+        return new ListResult(summaries);
     }
 
-    public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
+    public CreateResult createGame(CreateRequest request) throws DataAccessException {
         if (dataAccess.getAuth(request.authToken()) == null) {
             throw new DataAccessException("unauthorized");
         }
@@ -47,10 +47,10 @@ public class GameService {
         }
         int id = dataAccess.createGame(new GameData(0, null, null,
                 name));
-        return new CreateGameResult(id);
+        return new CreateResult(id);
     }
 
-    public JoinGameResult joinGame(JoinGameRequest request) throws DataAccessException {
+    public JoinResult joinGame(JoinRequest request) throws DataAccessException {
         var auth = dataAccess.getAuth(request.authToken());
         var username = auth.username();
         if (request.gameID() == null) {
@@ -78,6 +78,6 @@ public class GameService {
             game = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName());
         }
         dataAccess.updateGame(game);
-        return new JoinGameResult();
+        return new JoinResult();
     }
 }

@@ -4,16 +4,16 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import service.GameService;
-import service.requests.CreateGameRequest;
-import service.results.CreateGameResult;
+import service.requests.CreateRequest;
+import service.results.CreateResult;
 
 import java.util.Map;
 
-public class CreateGamesHandler {
+public class CreateHandler {
     private final Gson gson;
     private final GameService game;
 
-    public CreateGamesHandler(Gson gson, GameService game) {
+    public CreateHandler(Gson gson, GameService game) {
         this.gson = gson;
         this.game = game;
     }
@@ -23,10 +23,10 @@ public class CreateGamesHandler {
             String token = ctx.header("authorization");
             var body = gson.fromJson(ctx.body(), java.util.Map.class);
             String gameName = (String) body.get("gameName");
-            var request = new CreateGameRequest(token, gameName);
+            var request = new CreateRequest(token, gameName);
             var result = game.createGame(request);
             ctx.status(200).contentType("application/json").
-                    result(gson.toJson(result, CreateGameResult.class));
+                    result(gson.toJson(result, CreateResult.class));
         } catch (DataAccessException e) {
             String message = e.getMessage().toLowerCase();
             if (message.contains("bad request")) {

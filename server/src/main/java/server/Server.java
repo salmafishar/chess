@@ -6,9 +6,6 @@ import server.handlers.*;
 import io.javalin.*;
 import service.GameService;
 import service.UserService;
-import io.javalin.http.Context;
-
-import java.util.Map;
 
 public class Server {
 
@@ -24,9 +21,9 @@ public class Server {
         var registerHandler = new RegisterHandler(new Gson(), userService);
         var loginHandler = new LoginHandler(new Gson(), userService);
         var logoutHandler = new LogoutHandler(new Gson(), userService);
-        var listHandler = new ListGamesHandler(new Gson(), gameService);
-        var createHandler = new CreateGamesHandler(new Gson(), gameService);
-        var joinHandler = new JoinGameHandler(new Gson(), gameService);
+        var listHandler = new ListHandler(new Gson(), gameService);
+        var createHandler = new CreateHandler(new Gson(), gameService);
+        var joinHandler = new JoinHandler(new Gson(), gameService);
         // endpoints
         javalin.delete("/db", ctx -> {
             dao.clear();
@@ -39,41 +36,6 @@ public class Server {
         javalin.get("/game", listHandler::list);
         javalin.post("/game", createHandler::createGame);
         javalin.put("/game", joinHandler::join);
-        javalin.exception(Exception.class, this::exceptionHandler);
-    }
-
-    private static final Gson GSON = new Gson();
-
-    private void exceptionHandler(Exception ex, Context ctx) {
-        ctx.contentType("application/json");
-
-        if (ex instanceof server.exception.BaseException base) {
-            ctx.status(base.toHttpStatusCode()).result(base.toJson());
-            return;
-        }
-
-        if (ex instanceof dataaccess.DataAccessException dao) {
-            String message = dao.getMessage();
-            int code;
-            if (message.equals("unauthorized") || message.contains("unauthor") || message.contains("not found") || message.contains("invalid credential")) {
-                code = 401;
-            } else if (message.equals("already taken") || message.contains("taken") || message.contains("conflict")) {
-                code = 403;
-            } else if (message.equals("bad request") || message.contains("bad") || message.contains("malformed") || message.contains("invalid") || message.contains("missing")) {
-                code = 400;
-            } else {
-                code = 500;
-            }
-            String canon = switch (code) {
-                case 400 -> "bad request";
-                case 401 -> "unauthorized";
-                case 403 -> "already taken";
-                default -> "server error";
-            };
-            ctx.status(code).result(GSON.toJson(Map.of("message", "Error: " + canon)));
-            return;
-        }
-        ctx.status(500).result(GSON.toJson(Map.of("message", "Error: server error")));
     }
 
     public int run(int desiredPort) {
