@@ -1,10 +1,9 @@
-package chess.PieceMoves;
+package chess.piece_moves;
 
 import chess.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /*
 Knights move in an L shape, moving 2 squares in one direction and 1 square in the other direction.

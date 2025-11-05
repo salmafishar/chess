@@ -1,4 +1,4 @@
-package chess.PieceMoves;
+package chess.piece_moves;
 /*
 square in any direction (including diagonal)
 to either a position occupied by an enemy piece,
