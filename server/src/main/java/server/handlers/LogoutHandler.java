@@ -25,13 +25,13 @@ public class LogoutHandler {
             ctx.status(200).contentType("application/json").
                     result("{}");
         } catch (DataAccessException e) {
-            String m = e.getMessage().toLowerCase();
-            if (m.contains("unauthorized")) {
+            String message = e.getMessage().toLowerCase();
+            if (message.contains("unauthorized")) {
                 ctx.status(401).contentType("application/json")
                         .result(gson.toJson(Map.of("message", "Error: unauthorized")));
             } else {
                 ctx.status(500).contentType("application/json")
-                        .result(gson.toJson(Map.of("message", "Error: " + m)));
+                        .result(gson.toJson(Map.of("message", "Error: " + message)));
             }
         }
     }

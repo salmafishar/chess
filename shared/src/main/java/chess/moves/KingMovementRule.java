@@ -1,16 +1,20 @@
-package chess.piece_moves;
+package chess.moves;
+/*
+square in any direction (including diagonal)
+to either a position occupied by an enemy piece,
+or to an unoccupied position
+A player is not allowed to make any move that would allow the opponent to capture their King.
+If your King is in danger of being captured on your turn,
+you must make a move that removes your King from immediate danger.
+ */
 
 import chess.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-/*
-Knights move in an L shape, moving 2 squares in one direction and 1 square in the other direction.
- Knights are the only piece that can ignore pieces in the in-between squares (they can "jump" over other pieces).
-They can move to squares occupied by an enemy piece and capture the enemy piece, or to unoccupied squares.
- */
-public class KnightMovementRule extends BaseMovement {
+
+public class KingMovementRule extends BaseMovement {
     @Override
     public Collection<ChessMove> moves(ChessBoard board, ChessPosition position) {
         ArrayList<ChessMove> moves = new ArrayList<>();
@@ -19,8 +23,8 @@ public class KnightMovementRule extends BaseMovement {
         ChessPiece me = at(board, r, c);
         ChessGame.TeamColor color = me.getTeamColor();
         int[][] directions = {
-                {2, 1}, {2, -1}, {-2, 1}, {-2, -1}
-                , {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
+                {1, 0}, {0, 1}, {-1, 0}, {0, -1},
+                {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
         };
         addForwardMove(position, board, directions, r, c, color, moves);
         return moves;
