@@ -7,7 +7,10 @@ import server.Server;
 
 import java.lang.reflect.Method;
 import java.sql.*;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -32,16 +35,15 @@ public class DatabaseTests {
         serverFacade = new TestServerFacade("localhost", Integer.toString(port));
     }
 
-    @BeforeEach
-    public void setUp() {
-        serverFacade.clear();
-    }
-
     @AfterAll
     static void stopServer() {
         server.stop();
     }
 
+    @BeforeEach
+    public void setUp() {
+        serverFacade.clear();
+    }
 
     @Test
     @DisplayName("Persistence Test")
@@ -198,7 +200,7 @@ public class DatabaseTests {
     }
 
     private Class<?> findDatabaseManager() throws ClassNotFoundException {
-        if(databaseManagerClass != null) {
+        if (databaseManagerClass != null) {
             return databaseManagerClass;
         }
 
@@ -208,7 +210,8 @@ public class DatabaseTests {
                 clazz.getDeclaredMethod("getConnection");
                 databaseManagerClass = clazz;
                 return clazz;
-            } catch (ReflectiveOperationException ignored) {}
+            } catch (ReflectiveOperationException ignored) {
+            }
         }
         throw new ClassNotFoundException("Unable to load database in order to verify persistence. " +
                 "Are you using DatabaseManager to set your credentials? " +

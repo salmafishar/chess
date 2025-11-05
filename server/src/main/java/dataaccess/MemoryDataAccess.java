@@ -1,21 +1,25 @@
 package dataaccess;
 
-import model.*;
+import model.AuthData;
+import model.GameData;
+import model.UserData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MemoryDataAccess implements DataAccess {
+    private static int nextGameId = 1;
     private final Map<String, UserData> users = new HashMap<>();
     private final UserDAO userDAO = new MemoryUserDAO(users);
     private final Map<String, AuthData> auths = new HashMap<>();
     private final AuthDAO authDAO = new MemoryAuthDAO(auths);
     private final Map<Integer, GameData> games = new HashMap<>();
     private final GameDOA gameDOA = new MemoryGamehDAO(games);
-    private static int nextGameId = 1;
-
 
     @Override
-    public void clear() throws DataAccessException {
+    public void clear() {
         users.clear();
         auths.clear();
         games.clear();
@@ -37,12 +41,7 @@ public class MemoryDataAccess implements DataAccess {
         return gameDOA;
     }
 
-    private static class MemoryUserDAO implements UserDAO {
-        private final Map<String, UserData> store;
-
-        MemoryUserDAO(Map<String, UserData> store) {
-            this.store = store;
-        }
+    private record MemoryUserDAO(Map<String, UserData> store) implements UserDAO {
 
         @Override
         public void createUser(UserData u) throws DataAccessException {
@@ -53,20 +52,15 @@ public class MemoryDataAccess implements DataAccess {
         }
 
         @Override
-        public UserData getUser(String username) throws DataAccessException {
+        public UserData getUser(String username) {
             return store.get(username);
         }
     }
 
-    private static class MemoryAuthDAO implements AuthDAO {
-        private final Map<String, AuthData> store;
-
-        private MemoryAuthDAO(Map<String, AuthData> auth) {
-            this.store = auth;
-        }
+    private record MemoryAuthDAO(Map<String, AuthData> store) implements AuthDAO {
 
         @Override
-        public void createAuth(AuthData a) throws DataAccessException {
+        public void createAuth(AuthData a) {
             store.put(a.authToken(), a);
         }
 
@@ -80,20 +74,15 @@ public class MemoryDataAccess implements DataAccess {
         }
 
         @Override
-        public void deleteAuth(String token) throws DataAccessException {
+        public void deleteAuth(String token) {
             store.remove(token);
         }
     }
 
-    private static class MemoryGamehDAO implements GameDOA {
-        private final Map<Integer, GameData> store;
-
-        private MemoryGamehDAO(Map<Integer, GameData> store) {
-            this.store = store;
-        }
+    private record MemoryGamehDAO(Map<Integer, GameData> store) implements GameDOA {
 
         @Override
-        public int createGame(GameData g) throws DataAccessException {
+        public int createGame(GameData g) {
             int id = nextGameId++;
             var newGame = new GameData(id, g.whiteUsername(),
                     g.blackUsername(), g.gameName());
@@ -111,7 +100,7 @@ public class MemoryDataAccess implements DataAccess {
         }
 
         @Override
-        public Collection<GameData> listGames() throws DataAccessException {
+        public Collection<GameData> listGames() {
             var out = new ArrayList<GameData>();
             for (var g : store.values()) {
                 if (g != null) {

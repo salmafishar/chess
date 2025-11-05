@@ -2,8 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.MemoryDataAccess;
+import io.javalin.Javalin;
 import server.handlers.*;
-import io.javalin.*;
 import service.GameService;
 import service.UserService;
 
