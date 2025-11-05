@@ -6,9 +6,13 @@ import java.util.*;
 
 public class MemoryDataAccess implements DataAccess {
     private final Map<String, UserData> users = new HashMap<>();
+    private final UserDAO userDAO = new MemoryUserDAO(users);
     private final Map<String, AuthData> auths = new HashMap<>();
+    private final AuthDAO authDAO = new MemoryAuthDAO(auths);
     private final Map<Integer, GameData> games = new HashMap<>();
-    private int nextGameId = 1;
+    private final GameDOA gameDOA = new MemoryGamehDAO(games);
+    private static int nextGameId = 1;
+
 
     @Override
     public void clear() throws DataAccessException {
@@ -19,75 +23,111 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void createUser(UserData u) throws DataAccessException {
-        if (users.containsKey(u.username())) {
-            throw new DataAccessException("Username Already exists");
+    public UserDAO users() {
+        return userDAO;
+    }
+
+    @Override
+    public AuthDAO auths() {
+        return authDAO;
+    }
+
+    @Override
+    public GameDOA games() {
+        return gameDOA;
+    }
+
+    private static class MemoryUserDAO implements UserDAO {
+        private final Map<String, UserData> store;
+
+        MemoryUserDAO(Map<String, UserData> store) {
+            this.store = store;
         }
-        users.put(u.username(), u);
-    }
 
-    @Override
-    public UserData getUser(String username) throws DataAccessException {
-        var user = users.get(username);
-        if (user == null) {
-            throw new DataAccessException("Username not found");
-        }
-        return user;
-    }
-
-    @Override
-    public void createAuth(AuthData token) throws DataAccessException {
-        auths.put(token.authToken(), token);
-    }
-
-    @Override
-    public AuthData getAuth(String authToken) throws DataAccessException {
-        var auth = auths.get(authToken);
-        if (auth == null) {
-            throw new DataAccessException("Unauthorized");
-        }
-        return auth;
-    }
-
-    @Override
-    public void deleteAuth(String authToken) throws DataAccessException {
-        auths.remove(authToken);
-    }
-
-    @Override
-    public int createGame(GameData game) throws DataAccessException {
-        int id = nextGameId++;
-        var newGame = new GameData(id, game.whiteUsername(),
-                game.blackUsername(), game.gameName());
-        games.put(id, newGame);
-        return id;
-    }
-
-    @Override
-    public GameData getGame(int gameID) throws DataAccessException {
-        var game = games.get(gameID);
-        if (game == null) {
-            throw new DataAccessException("Game not found");
-        }
-        return game;
-    }
-
-    @Override
-    public Collection<GameData> listGames() throws DataAccessException {
-        var out = new ArrayList<GameData>();
-        for (var g : games.values()) {
-            if (g != null) {
-                out.add(g);
+        @Override
+        public void createUser(UserData u) throws DataAccessException {
+            if (store.containsKey(u.username())) {
+                throw new DataAccessException("Username Already exists");
             }
+            store.put(u.username(), u);
         }
-        return out;
+
+        @Override
+        public UserData getUser(String username) throws DataAccessException {
+            return store.get(username);
+        }
     }
 
-    @Override
-    public void updateGame(GameData game) throws DataAccessException {
-        if (!games.containsKey(game.gameID())) {
-            throw new DataAccessException("Game not found");
+    private static class MemoryAuthDAO implements AuthDAO {
+        private final Map<String, AuthData> store;
+
+        private MemoryAuthDAO(Map<String, AuthData> auth) {
+            this.store = auth;
         }
-        games.put(game.gameID(), game);
+
+        @Override
+        public void createAuth(AuthData a) throws DataAccessException {
+            store.put(a.authToken(), a);
+        }
+
+        @Override
+        public AuthData getAuth(String token) throws DataAccessException {
+            var auth = store.get(token);
+            if (auth == null) {
+                throw new DataAccessException("Unauthorized");
+            }
+            return store.get(token);
+        }
+
+        @Override
+        public void deleteAuth(String token) throws DataAccessException {
+            store.remove(token);
+        }
     }
+
+    private static class MemoryGamehDAO implements GameDOA {
+        private final Map<Integer, GameData> store;
+
+        private MemoryGamehDAO(Map<Integer, GameData> store) {
+            this.store = store;
+        }
+
+        @Override
+        public int createGame(GameData g) throws DataAccessException {
+            int id = nextGameId++;
+            var newGame = new GameData(id, g.whiteUsername(),
+                    g.blackUsername(), g.gameName());
+            store.put(id, newGame);
+            return id;
+        }
+
+        @Override
+        public GameData getGame(int gameID) throws DataAccessException {
+            var game = store.get(gameID);
+            if (game == null) {
+                throw new DataAccessException("Game not found");
+            }
+            return game;
+        }
+
+        @Override
+        public Collection<GameData> listGames() throws DataAccessException {
+            var out = new ArrayList<GameData>();
+            for (var g : store.values()) {
+                if (g != null) {
+                    out.add(g);
+                }
+            }
+            return out;
+        }
+
+        @Override
+        public void updateGame(GameData g) throws DataAccessException {
+            if (!store.containsKey(g.gameID())) {
+                throw new DataAccessException("Game not found");
+            }
+            store.put(g.gameID(), g);
+        }
+    }
+
 }

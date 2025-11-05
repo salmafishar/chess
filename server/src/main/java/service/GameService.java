@@ -23,8 +23,8 @@ public class GameService {
     // request -> authToken
     // result -> java.util.Collection<model.GameData> games
     public ListResult listGames(ListRequest request) throws DataAccessException {
-        dataAccess.getAuth(request.authToken());
-        var allGames = dataAccess.listGames();
+        dataAccess.auths().getAuth(request.authToken());
+        var allGames = dataAccess.games().listGames();
         var summaries = new ArrayList<GameData>();
         for (var game : allGames) {
             summaries.add(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(),
@@ -34,25 +34,25 @@ public class GameService {
     }
 
     public CreateResult createGame(CreateRequest request) throws DataAccessException {
-        if (dataAccess.getAuth(request.authToken()) == null) {
+        if (dataAccess.auths().getAuth(request.authToken()) == null) {
             throw new DataAccessException("unauthorized");
         }
         var name = request.gameName();
         if (name == null) {
             throw new DataAccessException("bad request");
         }
-        int id = dataAccess.createGame(new GameData(0, null, null,
+        int id = dataAccess.games().createGame(new GameData(0, null, null,
                 name));
         return new CreateResult(id);
     }
 
     public JoinResult joinGame(JoinRequest request) throws DataAccessException {
-        var auth = dataAccess.getAuth(request.authToken());
+        var auth = dataAccess.auths().getAuth(request.authToken());
         var username = auth.username();
         if (request.gameID() == null) {
             throw new DataAccessException("bad request");
         }
-        var g = dataAccess.getGame(request.gameID());
+        var g = dataAccess.games().getGame(request.gameID());
         if (g == null) {
             throw new DataAccessException("bad request");
         }
@@ -73,7 +73,7 @@ public class GameService {
             }
             g = new GameData(g.gameID(), g.whiteUsername(), username, g.gameName());
         }
-        dataAccess.updateGame(g);
+        dataAccess.games().updateGame(g);
         return new JoinResult();
     }
 }

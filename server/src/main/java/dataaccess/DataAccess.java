@@ -1,27 +1,11 @@
 package dataaccess;
 
-import model.*;
-
-import java.util.Collection;
-
 public interface DataAccess {
     void clear() throws DataAccessException;
 
-    void createUser(UserData u) throws DataAccessException;
+    UserDAO users();
 
-    UserData getUser(String username) throws DataAccessException;
+    AuthDAO auths();
 
-    int createGame(GameData game) throws DataAccessException;
-
-    GameData getGame(int gameID) throws DataAccessException;
-
-    Collection<GameData> listGames() throws DataAccessException;
-
-    void updateGame(GameData game) throws DataAccessException;
-
-    void createAuth(AuthData token) throws DataAccessException;
-
-    AuthData getAuth(String authToken) throws DataAccessException;
-
-    void deleteAuth(String authToken) throws DataAccessException;
+    GameDOA games();
 }
