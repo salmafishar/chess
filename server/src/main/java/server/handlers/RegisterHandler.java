@@ -1,7 +1,7 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import dataaccess.*;
+import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import service.UserService;
 import service.requests.RegisterRequest;

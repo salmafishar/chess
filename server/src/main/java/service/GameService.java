@@ -7,8 +7,12 @@ After performing its purpose, it returns a corresponding Result object containin
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.GameData;
-import service.results.*;
-import service.requests.*;
+import service.requests.CreateRequest;
+import service.requests.JoinRequest;
+import service.requests.ListRequest;
+import service.results.CreateResult;
+import service.results.JoinResult;
+import service.results.ListResult;
 
 import java.util.ArrayList;
 
