@@ -7,10 +7,7 @@ import server.Server;
 
 import java.lang.reflect.Method;
 import java.sql.*;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -35,15 +32,16 @@ public class DatabaseTests {
         serverFacade = new TestServerFacade("localhost", Integer.toString(port));
     }
 
+    @BeforeEach
+    public void setUp() {
+        serverFacade.clear();
+    }
+
     @AfterAll
     static void stopServer() {
         server.stop();
     }
 
-    @BeforeEach
-    public void setUp() {
-        serverFacade.clear();
-    }
 
     @Test
     @DisplayName("Persistence Test")
