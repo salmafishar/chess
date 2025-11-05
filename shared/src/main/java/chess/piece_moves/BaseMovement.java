@@ -24,7 +24,8 @@ abstract class BaseMovement implements MovementRule {
     }
 
 
-    protected void addForwardMove(ChessPosition currentPosition, ChessBoard board, int[][] move, int r, int c, ChessGame.TeamColor me, ArrayList<ChessMove> moves) {
+    protected void addForwardMove(ChessPosition currentPosition, ChessBoard board, int[][] move, int r,
+                                  int c, ChessGame.TeamColor me, ArrayList<ChessMove> moves) {
         for (int[] m : move) {
             int rF = r + m[0];
             int cF = c + m[1];
@@ -39,7 +40,8 @@ abstract class BaseMovement implements MovementRule {
     }
 
 
-    protected void addSlidingMove(ChessPosition currentPosition, ChessBoard board, int[][] move, int r, int c, ChessGame.TeamColor me, ArrayList<ChessMove> moves) {
+    protected void addSlidingMove(ChessPosition currentPosition, ChessBoard board, int[][] move, int r, int c,
+                                  ChessGame.TeamColor me, ArrayList<ChessMove> moves) {
         for (int[] m : move) {
             int rF = r + m[0];
             int cF = c + m[1];
