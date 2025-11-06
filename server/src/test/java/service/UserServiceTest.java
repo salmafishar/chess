@@ -18,7 +18,7 @@ class UserServiceTest {
 
 
     @BeforeEach
-    void clear() throws DataAccessException {
+    void clear() {
         dao = new MemoryDataAccess();
         user = new UserService(dao);
         dao.clear();
@@ -57,7 +57,7 @@ class UserServiceTest {
         var registerReq = new RegisterRequest("sal", "21", "s@al21");
         user.register(registerReq);
         var req = new LoginRequest("sal", "21");
-        var res = user.login(req);
+        user.login(req);
         DataAccessException ex = assertThrows(DataAccessException.class, () ->
                 user.login(new LoginRequest("sl", "21")));
         assertEquals("unauthorized", ex.getMessage());
