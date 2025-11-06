@@ -27,7 +27,7 @@ class UserServiceTest {
     @Test
         // Positive Test
         // returns auth token
-    void register_ok() throws DataAccessException {
+    void registerOk() throws DataAccessException {
         var req = new RegisterRequest("sal", "21", "s@al21");
         var res = user.register(req);
         assertNotNull(res.authToken());
@@ -35,7 +35,7 @@ class UserServiceTest {
     }
 
     @Test
-    void register_name_duplicate() throws DataAccessException {
+    void registerNameDuplicate() throws DataAccessException {
         user.register(new RegisterRequest("sal", "21", "s@al21"));
         DataAccessException ex = assertThrows(DataAccessException.class, () ->
                 user.register(new RegisterRequest("sal", "21", "s@al21")));
@@ -43,7 +43,7 @@ class UserServiceTest {
     }
 
     @Test
-    void login_ok() throws DataAccessException {
+    void loginOk() throws DataAccessException {
         var registerReq = new RegisterRequest("sal", "21", "s@al21");
         user.register(registerReq);
         var req = new LoginRequest("sal", "21");
@@ -53,7 +53,7 @@ class UserServiceTest {
     }
 
     @Test
-    void login_failed() throws DataAccessException {
+    void loginFailed() throws DataAccessException {
         var registerReq = new RegisterRequest("sal", "21", "s@al21");
         user.register(registerReq);
         var req = new LoginRequest("sal", "21");
@@ -64,7 +64,7 @@ class UserServiceTest {
     }
 
     @Test
-    void logout_ok() throws DataAccessException {
+    void logoutOk() throws DataAccessException {
         var registerReq = user.register(new RegisterRequest("sal", "21", "s@al21"));
         var token = registerReq.authToken();
         var logoutReq = new LogoutRequest(token);
@@ -75,7 +75,7 @@ class UserServiceTest {
     }
 
     @Test
-    void logout_failed() throws DataAccessException {
+    void logoutFailed() throws DataAccessException {
         var registerReq = user.register(new RegisterRequest("sal", "21", "s@al21"));
         var name = registerReq.username();
         var ex = assertThrows(DataAccessException.class, () ->
