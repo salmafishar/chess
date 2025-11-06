@@ -2,7 +2,6 @@ package service;
 
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.requests.LoginRequest;
 import service.requests.LogoutRequest;
@@ -17,7 +16,7 @@ class UserServiceTest {
     UserService user;
 
 
-    @BeforeEach
+    @Test
     void clear() {
         dao = new MemoryDataAccess();
         user = new UserService(dao);
@@ -28,6 +27,7 @@ class UserServiceTest {
         // Positive Test
         // returns auth token
     void registerOk() throws DataAccessException {
+        clear();
         var req = new RegisterRequest("sal", "21", "s@al21");
         var res = user.register(req);
         assertNotNull(res.authToken());
@@ -36,6 +36,7 @@ class UserServiceTest {
 
     @Test
     void registerNameDuplicate() throws DataAccessException {
+        clear();
         user.register(new RegisterRequest("sal", "21", "s@al21"));
         DataAccessException ex = assertThrows(DataAccessException.class, () ->
                 user.register(new RegisterRequest("sal", "21", "s@al21")));
@@ -44,6 +45,7 @@ class UserServiceTest {
 
     @Test
     void loginOk() throws DataAccessException {
+        clear();
         var registerReq = new RegisterRequest("sal", "21", "s@al21");
         user.register(registerReq);
         var req = new LoginRequest("sal", "21");
@@ -54,6 +56,7 @@ class UserServiceTest {
 
     @Test
     void loginFailed() throws DataAccessException {
+        clear();
         var registerReq = new RegisterRequest("sal", "21", "s@al21");
         user.register(registerReq);
         var req = new LoginRequest("sal", "21");
@@ -65,6 +68,7 @@ class UserServiceTest {
 
     @Test
     void logoutOk() throws DataAccessException {
+        clear();
         var registerReq = user.register(new RegisterRequest("sal", "21", "s@al21"));
         var token = registerReq.authToken();
         var logoutReq = new LogoutRequest(token);
@@ -76,6 +80,7 @@ class UserServiceTest {
 
     @Test
     void logoutFailed() throws DataAccessException {
+        clear();
         var registerReq = user.register(new RegisterRequest("sal", "21", "s@al21"));
         var name = registerReq.username();
         var ex = assertThrows(DataAccessException.class, () ->
