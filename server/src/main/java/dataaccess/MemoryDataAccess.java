@@ -1,5 +1,8 @@
 package dataaccess;
 
+import dataaccess.doas.AuthDAO;
+import dataaccess.doas.GameDOA;
+import dataaccess.doas.UserDAO;
 import model.AuthData;
 import model.GameData;
 import model.UserData;

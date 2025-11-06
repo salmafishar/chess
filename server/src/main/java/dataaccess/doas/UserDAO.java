@@ -1,5 +1,6 @@
-package dataaccess;
+package dataaccess.doas;
 
+import dataaccess.DataAccessException;
 import model.UserData;
 
 //UserData >> String username, String password, String email
