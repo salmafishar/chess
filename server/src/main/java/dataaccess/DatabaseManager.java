@@ -43,6 +43,40 @@ public class DatabaseManager {
      * }
      * </code>
      */
+    private final static String[] createTables = {
+            """
+            CREATE TABLE IF NOT EXISTS  user (
+              `username` varchar(256) NOT NULL,
+              `email` varchar(256) NOT NULL,
+              `password` varchar(256) NOT NULL,
+              PRIMARY KEY (`username`),
+              INDEX(username)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS  auth (
+              `authToken` varchar(256) NOT NULL,
+              `username` varchar(256) NOT NULL,
+              PRIMARY KEY (`authToken`),
+              INDEX(username),
+              INDEX(authToken),
+              Foreign key (username) REFERENCES user(username)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS  game (
+              `gameID` int NOT NULL AUTO_INCREMENT,
+              `whiteUsername` varchar(256) NULL,
+              `blackUsername` varchar(256) NULL,
+              `gameName` varchar(256) NOT NULL,
+              `game` text NOT NULL,
+              PRIMARY KEY (`gameID`),
+              Foreign key (whiteUsername) REFERENCES user(username),
+              Foreign key (blackUsername) REFERENCES user(username)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+    
     static Connection getConnection() throws DataAccessException {
         try {
             //do not wrap the following line with a try-with-resources
