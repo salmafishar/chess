@@ -34,6 +34,7 @@ class DatabaseManagerTest {
     @Test
     void userTableExists() throws Exception {
         DatabaseManager.createDatabase();
+        DatabaseManager.createTables();
         try (var conn = DatabaseManager.getConnection();
              var statement = conn.prepareStatement("SELECT COUNT(*) FROM information_schema.tables " +
                      "WHERE table_schema = DATABASE() AND table_name = 'user'")) {
