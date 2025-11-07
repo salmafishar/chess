@@ -43,14 +43,13 @@ public class DatabaseManager {
      * }
      * </code>
      */
-    private final static String[] createTables = {
+    private final static String[] Tables = {
             """
             CREATE TABLE IF NOT EXISTS  user (
               `username` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               PRIMARY KEY (`username`),
-              INDEX(username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
             """
@@ -76,10 +75,23 @@ public class DatabaseManager {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
-    
+
+    static public void createTables() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (String table : Tables) {
+                try (var preparedStatement = conn.prepareStatement(table)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new DataAccessException("failed to configure database", e);
+        }
+    }
+
     static Connection getConnection() throws DataAccessException {
         try {
-            //do not wrap the following line with a try-with-resources
             var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
             conn.setCatalog(databaseName);
             return conn;
