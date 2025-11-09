@@ -65,4 +65,25 @@ class MySqlDataAccessTest {
         assertEquals("Token already exists", ex.getMessage());
 
     }
+
+    @Test
+    void deleteAuthPass() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        dao.users().createUser(new UserData("sal", "231|-|", "s@woo.com"));
+        dao.auths().createAuth(new AuthData("te21", "sal"));
+        dao.auths().deleteAuth("te21");
+        var auth = dao.auths().getAuth("te21");
+        assertNull(auth);
+    }
+
+    @Test
+    void deleteAuthFail() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        dao.users().createUser(new UserData("sal", "231|-|", "s@woo.com"));
+        dao.auths().createAuth(new AuthData("te21", "sal"));
+        var ex = assertThrows(DataAccessException.class, () -> dao.auths().deleteAuth("te2q"));
+        assertEquals("Token is not deleted", ex.getMessage());
+    }
 }
