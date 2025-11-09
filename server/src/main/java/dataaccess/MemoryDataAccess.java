@@ -1,7 +1,7 @@
 package dataaccess;
 
 import dataaccess.doas.AuthDAO;
-import dataaccess.doas.GameDOA;
+import dataaccess.doas.GameDAO;
 import dataaccess.doas.UserDAO;
 import model.AuthData;
 import model.GameData;
@@ -19,7 +19,7 @@ public class MemoryDataAccess implements DataAccess {
     private final Map<String, AuthData> auths = new HashMap<>();
     private final AuthDAO authDAO = new MemoryAuthDAO(auths);
     private final Map<Integer, GameData> games = new HashMap<>();
-    private final GameDOA gameDOA = new MemoryGamehDAO(games);
+    private final GameDAO gameDAO = new MemoryGameDAO(games);
 
     @Override
     public void clear() {
@@ -40,8 +40,8 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public GameDOA games() {
-        return gameDOA;
+    public GameDAO games() {
+        return gameDAO;
     }
 
     private record MemoryUserDAO(Map<String, UserData> store) implements UserDAO {
@@ -82,7 +82,7 @@ public class MemoryDataAccess implements DataAccess {
         }
     }
 
-    private record MemoryGamehDAO(Map<Integer, GameData> store) implements GameDOA {
+    private record MemoryGameDAO(Map<Integer, GameData> store) implements GameDAO {
 
         @Override
         public int createGame(GameData g) {

@@ -5,7 +5,7 @@ import model.GameData;
 
 import java.util.Collection;
 
-public interface GameDOA {
+public interface GameDAO {
     int createGame(GameData g) throws DataAccessException;
 
     GameData getGame(int gameID) throws DataAccessException;

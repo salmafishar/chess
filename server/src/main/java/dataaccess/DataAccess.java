@@ -1,7 +1,7 @@
 package dataaccess;
 
 import dataaccess.doas.AuthDAO;
-import dataaccess.doas.GameDOA;
+import dataaccess.doas.GameDAO;
 import dataaccess.doas.UserDAO;
 
 public interface DataAccess {
@@ -11,5 +11,5 @@ public interface DataAccess {
 
     AuthDAO auths();
 
-    GameDOA games();
+    GameDAO games();
 }
