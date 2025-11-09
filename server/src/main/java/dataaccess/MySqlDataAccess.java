@@ -61,7 +61,17 @@ public class MySqlDataAccess implements DataAccess {
     private static class mySQLAuthDAO implements AuthDAO {
         @Override
         public void createAuth(AuthData a) throws DataAccessException {
-
+            String sql = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+            try (var conn = DatabaseManager.getConnection();
+                 var ps = conn.prepareStatement(sql)) {
+                ps.setString(1, a.authToken());
+                ps.setString(2, a.username());
+                ps.executeUpdate();
+            } catch (java.sql.SQLIntegrityConstraintViolationException duplicate) {
+                throw new DataAccessException("Token already exists", duplicate);
+            } catch (SQLException e) {
+                throw new DataAccessException("failed to create auth", e);
+            }
         }
 
         @Override
