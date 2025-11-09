@@ -41,4 +41,28 @@ class MySqlDataAccessTest {
                 UserData("salma", "21|-?", "s@dho.com")));
         assertEquals("username already exists", ex.getMessage().toLowerCase());
     }
+
+    @Test
+    void createAuth() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        dao.users().createUser(new UserData("sal", "231|-|", "s@woo.com"));
+        dao.auths().createAuth(new AuthData("te21", "sal"));
+        var auth = dao.auths().getAuth("te21");
+        var user = dao.users().getUser("sal");
+        assertNotNull(auth);
+        assertEquals(user.username(), auth.username());
+    }
+
+    @Test
+    void createAuthFailed() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        dao.users().createUser(new UserData("sal", "231|-|", "s@woo.com"));
+        dao.auths().createAuth(new AuthData("te21", "sal"));
+        var ex = assertThrows(DataAccessException.class, () -> dao.auths().createAuth(
+                new AuthData("te21", "sam")));
+        assertEquals("Token already exists", ex.getMessage());
+
+    }
 }
