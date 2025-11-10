@@ -150,4 +150,27 @@ class MySqlDataAccessTest {
                 new GameData(0, "woo", null, "nope")));
         assertEquals("Failed to create game", ex.getMessage());
     }
+
+    @Test
+    void updateGamePass() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        int id = dao.games().createGame(new GameData(0, null, null, "game1"));
+        dao.users().createUser(new UserData("woo",
+                "pw", "woo@example.com"));
+        dao.games().updateGame(new GameData(id,
+                "woo", null, "game1"));
+        var g = dao.games().getGame(id);
+        assertEquals(g.whiteUsername(), "woo");
+    }
+
+    @Test
+    void updateGameFail() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        int id = dao.games().createGame(new GameData(0, null, null, "game1"));
+        var ex = assertThrows(DataAccessException.class, () -> dao.games().updateGame(new GameData(id,
+                "woo", null, "game1")));
+        assertEquals("failed to update game", ex.getMessage());
+    }
 }
