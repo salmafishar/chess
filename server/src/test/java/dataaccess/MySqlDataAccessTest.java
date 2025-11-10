@@ -86,4 +86,23 @@ class MySqlDataAccessTest {
         var ex = assertThrows(DataAccessException.class, () -> dao.auths().deleteAuth("te2q"));
         assertEquals("Token is not deleted", ex.getMessage());
     }
+
+    @Test
+    void createGamePass() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        int gameID = dao.games().createGame(new GameData(0,
+                null, null, "game1"));
+        assertTrue(gameID > 0);
+    }
+
+    @Test
+    void createGameFail() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        dao.users().createUser(new UserData("sal", "231|-|", "s@woo.com"));
+        var ex = assertThrows(DataAccessException.class, () ->
+                dao.games().createGame(new GameData(0, "ghost", null, "g2")));
+        assertEquals("Failed to create game", ex.getMessage());
+    }
 }
