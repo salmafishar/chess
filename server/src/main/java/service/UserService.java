@@ -8,6 +8,7 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import service.requests.LoginRequest;
 import service.requests.LogoutRequest;
 import service.requests.RegisterRequest;
@@ -30,18 +31,25 @@ public class UserService {
                 req.email() == null || req.password() == null) {
             throw new DataAccessException("bad request");
         }
-        dataAccess.users().createUser(new UserData(req.username(), req.password(), req.email()));
+        String hashedPassword = BCrypt.hashpw(req.password(), BCrypt.gensalt());
+        dataAccess.users().createUser(new UserData(req.username(), hashedPassword, req.email()));
         String t = java.util.UUID.randomUUID().toString();
         dataAccess.auths().createAuth(new AuthData(t, req.username()));
         return new RegisterResult(req.username(), t);
     }
+
 
     public LoginResult login(LoginRequest req) throws DataAccessException {
         if (req == null || req.username() == null || req.password() == null) {
             throw new DataAccessException("bad request");
         }
         var u = dataAccess.users().getUser((req.username()));
-        if (u == null || !u.password().equals(req.password())) {
+        if (u == null) {
+            throw new DataAccessException("unauthorized");
+        }
+        boolean comparePassword = BCrypt.checkpw(req.password(), u.password());
+
+        if (!comparePassword) {
             throw new DataAccessException("unauthorized");
         }
         String t = java.util.UUID.randomUUID().toString();
@@ -51,8 +59,11 @@ public class UserService {
 
     public LogoutResult logout(LogoutRequest req) throws DataAccessException {
         var t = dataAccess.auths().getAuth(req.authToken());
-
-        if (req.authToken() == null || !t.authToken().equals(req.authToken())) {
+        if (req.authToken() == null) {
+            throw new DataAccessException("unauthorized");
+        }
+        var auth = dataAccess.auths().getAuth(req.authToken());
+        if (auth == null) {
             throw new DataAccessException("unauthorized");
         }
         dataAccess.auths().deleteAuth(req.authToken());
