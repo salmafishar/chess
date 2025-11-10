@@ -105,4 +105,24 @@ class MySqlDataAccessTest {
                 dao.games().createGame(new GameData(0, "ghost", null, "g2")));
         assertEquals("Failed to create game", ex.getMessage());
     }
+
+    @Test
+    void getGamePass() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        int gameID = dao.games().createGame(new GameData(0,
+                null, null, "game1"));
+        GameData g = dao.games().getGame(gameID);
+        assertEquals("game1", g.gameName());
+
+    }
+
+    @Test
+    void getGameFail() throws Exception {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        var ex = assertThrows(DataAccessException.class, () -> dao.games().getGame(9999));
+        assertEquals("game not found", ex.getMessage());
+    }
+
 }
