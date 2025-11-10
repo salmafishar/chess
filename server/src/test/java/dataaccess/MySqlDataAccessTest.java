@@ -11,15 +11,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class MySqlDataAccessTest {
 
     @Test
-    void clear() throws Exception {
-//        var dao = new MySqlDataAccess();
-//        dao.users().createUser(new UserData("sma", "21|-/", "wo@wo.com"));
-//        dao.auths().createAuth(new AuthData("NowJS", "sma"));
-//        dao.games().createGame(new GameData(21, "white", "black", "coolGame"));
-//        dao.clear();
-//        assertTrue(dao.games().listGames().isEmpty());
-//        assertNull(dao.auths().getAuth("NowJS"));
-//        assertNull(dao.users().getUser("sma"));
+    void clear() throws DataAccessException {
+        var dao = new MySqlDataAccess();
+        dao.clear();
+        dao.users().createUser(new UserData("sa", "21|-/", "wo@wo.com"));
+        dao.auths().createAuth(new AuthData("NoJS", "sa"));
+        dao.games().createGame(new GameData(0, null, null, "coolGame"));
+        dao.clear();
+        assertTrue(dao.games().listGames().isEmpty());
+        assertNull(dao.auths().getAuth("NoJS"));
+        assertNull(dao.users().getUser("sa"));
     }
 
     @Test
