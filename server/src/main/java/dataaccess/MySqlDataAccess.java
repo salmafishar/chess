@@ -187,7 +187,35 @@ public class MySqlDataAccess implements DataAccess {
 
         @Override
         public void updateGame(GameData g) throws DataAccessException {
-
+            if (g == null) {
+                throw new DataAccessException("null game data");
+            }
+            final var sql = """
+                    UPDATE game
+                    SET whiteUsername = ?, blackUsername = ?, gameName = ?
+                    WHERE gameID = ?
+                    """;
+            try (var conn = DatabaseManager.getConnection();
+                 var ps = conn.prepareStatement(sql)) {
+                if (g.whiteUsername() == null) {
+                    ps.setNull(1, Types.VARCHAR);
+                } else {
+                    ps.setString(1, g.whiteUsername());
+                }
+                if (g.blackUsername() == null) {
+                    ps.setNull(2, Types.VARCHAR);
+                } else {
+                    ps.setString(2, g.blackUsername());
+                }
+                ps.setString(3, g.gameName());
+                ps.setInt(4, g.gameID());
+                int updated = ps.executeUpdate();
+                if (updated == 0) {
+                    throw new DataAccessException("game not found");
+                }
+            } catch (SQLException e) {
+                throw new DataAccessException("failed to update game", e);
+            }
         }
     }
 
