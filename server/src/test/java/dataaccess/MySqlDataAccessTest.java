@@ -4,7 +4,6 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.Test;
-import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -162,7 +161,7 @@ class MySqlDataAccessTest {
         dao.games().updateGame(new GameData(id,
                 "woo", null, "game1"));
         var g = dao.games().getGame(id);
-        assertEquals(g.whiteUsername(), "woo");
+        assertEquals("woo", g.whiteUsername());
     }
 
     @Test

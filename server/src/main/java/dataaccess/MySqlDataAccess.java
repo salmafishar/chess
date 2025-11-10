@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import dataaccess.doas.AuthDAO;
 import dataaccess.doas.GameDAO;
 import dataaccess.doas.UserDAO;
@@ -8,8 +10,10 @@ import model.GameData;
 import model.UserData;
 
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static dataaccess.DatabaseManager.createTables;
 
@@ -150,11 +154,10 @@ public class MySqlDataAccess implements DataAccess {
                 ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        int id = rs.getInt(gameID);
+                        int id = rs.getInt("gameID");
                         String white = rs.getString("whiteUsername");
                         String black = rs.getString("blackUsername");
                         String name = rs.getString("gameName");
-//                        String game = rs.getString(new Gson().toJson(new ChessGame()));
                         return new GameData(id, white, black, name);
                     }
                     throw new DataAccessException("game not found");
