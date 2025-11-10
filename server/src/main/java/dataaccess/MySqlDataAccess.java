@@ -21,6 +21,45 @@ public class MySqlDataAccess implements DataAccess {
     private final UserDAO userDAO = new mySQLUserDAO();
     private final AuthDAO authDAO = new mySQLAuthDAO();
     private final GameDAO gameDAO = new mySQLGameDAO();
+    private final String[] clearStatements = {
+            "SET FOREIGN_KEY_CHECKS=0",
+            "TRUNCATE TABLE auth",
+            "TRUNCATE TABLE game",
+            "TRUNCATE TABLE `user`",
+            "SET FOREIGN_KEY_CHECKS=1"
+    };
+
+    public MySqlDataAccess() throws DataAccessException {
+        createTables();
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection();
+             var statement = conn.createStatement()) {
+            for (String stmt : clearStatements) {
+                statement.executeUpdate(stmt);
+            }
+            System.out.println("The tables have been cleared");
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to clear database", ex);
+        }
+    }
+
+    @Override
+    public UserDAO users() {
+        return userDAO;
+    }
+
+    @Override
+    public AuthDAO auths() {
+        return authDAO;
+    }
+
+    @Override
+    public GameDAO games() {
+        return gameDAO;
+    }
 
     private static class mySQLUserDAO implements UserDAO {
 
@@ -220,45 +259,5 @@ public class MySqlDataAccess implements DataAccess {
                 throw new DataAccessException("failed to update game", e);
             }
         }
-    }
-
-    public MySqlDataAccess() throws DataAccessException {
-        createTables();
-    }
-
-    private final String[] clearStatements = {
-            "SET FOREIGN_KEY_CHECKS=0",
-            "TRUNCATE TABLE auth",
-            "TRUNCATE TABLE game",
-            "TRUNCATE TABLE `user`",
-            "SET FOREIGN_KEY_CHECKS=1"
-    };
-
-    @Override
-    public void clear() throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection();
-             var statement = conn.createStatement()) {
-            for (String stmt : clearStatements) {
-                statement.executeUpdate(stmt);
-            }
-            System.out.println("The tables have been cleared");
-        } catch (SQLException ex) {
-            throw new DataAccessException("failed to clear database", ex);
-        }
-    }
-
-    @Override
-    public UserDAO users() {
-        return userDAO;
-    }
-
-    @Override
-    public AuthDAO auths() {
-        return authDAO;
-    }
-
-    @Override
-    public GameDAO games() {
-        return gameDAO;
     }
 }

@@ -58,7 +58,6 @@ public class UserService {
     }
 
     public LogoutResult logout(LogoutRequest req) throws DataAccessException {
-        var t = dataAccess.auths().getAuth(req.authToken());
         if (req.authToken() == null) {
             throw new DataAccessException("unauthorized");
         }

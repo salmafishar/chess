@@ -6,31 +6,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DatabaseManager {
-    private static String databaseName;
-    private static String dbUsername;
-    private static String dbPassword;
-    private static String connectionUrl;
-
-    /*
-     * Load the database information for the db.properties file.
-     */
-    static {
-        loadPropertiesFromResources();
-    }
-
-    /**
-     * Creates the database if it does not already exist.
-     */
-    static public void createDatabase() throws DataAccessException {
-        var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
-        try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
-             var preparedStatement = conn.prepareStatement(statement)) {
-            preparedStatement.executeUpdate();
-        } catch (SQLException ex) {
-            throw new DataAccessException("failed to create database", ex);
-        }
-    }
-
     /**
      * Create a connection to the database and sets the catalog based upon the
      * properties specified in db.properties. Connections to the database should
@@ -75,6 +50,30 @@ public class DatabaseManager {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
+    private static String databaseName;
+    private static String dbUsername;
+    private static String dbPassword;
+    private static String connectionUrl;
+
+    /*
+     * Load the database information for the db.properties file.
+     */
+    static {
+        loadPropertiesFromResources();
+    }
+
+    /**
+     * Creates the database if it does not already exist.
+     */
+    static public void createDatabase() throws DataAccessException {
+        var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
+        try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
+             var preparedStatement = conn.prepareStatement(statement)) {
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to create database", ex);
+        }
+    }
 
     static public void createTables() throws DataAccessException {
         DatabaseManager.createDatabase();
