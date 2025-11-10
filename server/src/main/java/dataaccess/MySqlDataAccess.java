@@ -113,7 +113,33 @@ public class MySqlDataAccess implements DataAccess {
     private static class mySQLGameDAO implements GameDAO {
         @Override
         public int createGame(GameData g) throws DataAccessException {
-            return 0;
+            String sql = "INSERT INTO game (whiteUsername," +
+                    " blackUsername, gameName, game) VALUES  (?, ?, ?, ?)";
+            try (var conn = DatabaseManager.getConnection();
+                 var ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                if (g.whiteUsername() == null) {
+                    ps.setNull(1, Types.VARCHAR);
+                } else {
+                    ps.setString(1, g.whiteUsername());
+                }
+                if (g.blackUsername() == null) {
+                    ps.setNull(2, Types.VARCHAR);
+                } else {
+                    ps.setString(2, g.blackUsername());
+                }
+                ps.setString(3, g.gameName());
+                var game = new Gson().toJson(new ChessGame());
+                ps.setString(4, game);
+                ps.executeUpdate();
+                try (var rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+                throw new DataAccessException("failed to get generated gameID");
+            } catch (SQLException e) {
+                throw new DataAccessException("Failed to create game", e);
+            }
         }
 
         @Override
