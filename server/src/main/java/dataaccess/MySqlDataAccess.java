@@ -166,7 +166,23 @@ public class MySqlDataAccess implements DataAccess {
 
         @Override
         public Collection<GameData> listGames() throws DataAccessException {
-            return List.of();
+            final var sql = "SELECT gameID, whiteUsername, blackUsername, gameName FROM game";
+            var out = new ArrayList<GameData>();
+            try (var conn = DatabaseManager.getConnection();
+                 var ps = conn.prepareStatement(sql);
+                 var rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    int id = rs.getInt("gameID");
+                    String white = rs.getString("whiteUsername");
+                    String black = rs.getString("blackUsername");
+                    String name = rs.getString("gameName");
+                    out.add(new GameData(id, white, black, name));
+                }
+                return out;
+            } catch (SQLException e) {
+                throw new DataAccessException("failed to list games", e);
+            }
         }
 
         @Override
