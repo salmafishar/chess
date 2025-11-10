@@ -87,27 +87,9 @@ public class ChessGame {
         if (kingPos == null) {
             return false;
         }
-        TeamColor opp = teamColor;
-        if (teamColor == TeamColor.WHITE) {
-            opp = TeamColor.BLACK;
-        } else if (teamColor == TeamColor.BLACK) {
-            opp = TeamColor.WHITE;
+        {
+            return squareAttacked(board, kingPos, opponent(teamColor));
         }
-
-        for (int r = 1; r <= 8; r++) {
-            for (int c = 1; c <= 8; c++) {
-                ChessPosition position = new ChessPosition(r, c);
-                ChessPiece piece = board.getPiece(position);
-                if (piece != null && piece.getTeamColor() == opp) {
-                    for (ChessMove m : piece.pieceMoves(board, position)) {
-                        if (m.getEndPosition().equals(kingPos)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     private ChessPosition findKingOnBoard(TeamColor teamColor, ChessBoard board) {
@@ -161,20 +143,28 @@ public class ChessGame {
         return (c == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
+    private boolean pieceAttacks(ChessBoard board, ChessPosition pos, TeamColor by, ChessPosition target) {
+        var p = board.getPiece(pos);
+        if (p == null || p.getTeamColor() != by) {
+            return false;
+        }
+        var moves = p.pieceMoves(board, pos);
+        if (moves == null || moves.isEmpty()) {
+            return false;
+        }
+        for (var m : moves) {
+            if (m.getEndPosition().equals(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean squareAttacked(ChessBoard board, ChessPosition target, TeamColor by) {
         for (int r = 1; r <= 8; r++) {
             for (int c = 1; c <= 8; c++) {
-                var pos = new ChessPosition(r, c);
-                var p = board.getPiece(pos);
-                if (p != null && p.getTeamColor() == by) {
-                    var moves = p.pieceMoves(board, pos);
-                    if (moves != null) {
-                        for (var m : moves) {
-                            if (m.getEndPosition().equals(target)) {
-                                return true;
-                            }
-                        }
-                    }
+                if (pieceAttacks(board, new ChessPosition(r, c), by, target)) {
+                    return true;
                 }
             }
         }
@@ -225,12 +215,12 @@ public class ChessGame {
                 if (p != null && p.getTeamColor() == color) {
                     var mv = validMoves(pos);
                     if (mv != null && !mv.isEmpty()) {
-                        return true;
+                        return false;
                     }
                 }
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -243,7 +233,7 @@ public class ChessGame {
         //The king is in check: It is being attacked by an opponent's piece.
         //No legal escape for the king: The king cannot move to a safe square.
         //No blocking or capturing the attacker: The attacking piece cannot be captured, and no other piece can be moved to block the attack.
-        return isInCheck(teamColor) && !hasAnyLegalMove(teamColor);
+        return isInCheck(teamColor) && hasAnyLegalMove(teamColor);
     }
 
 
@@ -255,7 +245,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return !isInCheck(teamColor) && !hasAnyLegalMove(teamColor);
+        return !isInCheck(teamColor) && hasAnyLegalMove(teamColor);
     }
 
     /**
