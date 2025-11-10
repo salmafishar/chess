@@ -1,7 +1,10 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccess;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import dataaccess.MySqlDataAccess;
 import io.javalin.Javalin;
 import server.handlers.*;
 import service.GameService;
@@ -14,8 +17,16 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
+//        MySqlDataAccess dao;
+        final DataAccess dao;  // interface type
+        try {
+            dao = new MySqlDataAccess();    // constructor throws -> catch
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Failed to initialize database", e);
+
+        }
+
         // Register your endpoints and exception handlers here.
-        var dao = new MemoryDataAccess();
         var userService = new UserService(dao);
         var gameService = new GameService(dao);
         var registerHandler = new RegisterHandler(new Gson(), userService);
@@ -24,12 +35,10 @@ public class Server {
         var listHandler = new ListHandler(new Gson(), gameService);
         var createHandler = new CreateHandler(new Gson(), gameService);
         var joinHandler = new JoinHandler(new Gson(), gameService);
+        var clearHandler = new ClearHandler(new Gson(), dao);
+
         // endpoints
-        javalin.delete("/db", ctx -> {
-            dao.clear();
-            ctx.status(200).
-                    contentType("application/json").result("{}");
-        });
+        javalin.delete("/db", clearHandler::clear);
         javalin.post("/user", registerHandler::register);
         javalin.post("/session", loginHandler::login);
         javalin.delete("/session", logoutHandler::logout);
