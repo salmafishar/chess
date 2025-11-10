@@ -16,10 +16,9 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-//        MySqlDataAccess dao;
-        final DataAccess dao;  // interface type
+        final DataAccess dao;
         try {
-            dao = new MySqlDataAccess();    // constructor throws -> catch
+            dao = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException("Failed to initialize database", e);
 

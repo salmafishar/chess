@@ -130,11 +130,11 @@ public class MySqlDataAccess implements DataAccess {
                                 rs.getString("username")
                         );
                     }
+                    throw new DataAccessException("Unauthorized");
                 }
             } catch (SQLException e) {
                 throw new DataAccessException("failed to get token", e);
             }
-            return null;
         }
 
         @Override
