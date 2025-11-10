@@ -18,9 +18,9 @@ import java.util.Collection;
 import static dataaccess.DatabaseManager.createTables;
 
 public class MySqlDataAccess implements DataAccess {
-    private final UserDAO userDAO = new mySQLUserDAO();
-    private final AuthDAO authDAO = new mySQLAuthDAO();
-    private final GameDAO gameDAO = new mySQLGameDAO();
+    private final UserDAO userDAO = new MySQLUserDAO();
+    private final AuthDAO authDAO = new MySQLAuthDAO();
+    private final GameDAO gameDAO = new MySQLGameDAO();
     private final String[] clearStatements = {
             "SET FOREIGN_KEY_CHECKS=0",
             "TRUNCATE TABLE auth",
@@ -61,7 +61,7 @@ public class MySqlDataAccess implements DataAccess {
         return gameDAO;
     }
 
-    private static class mySQLUserDAO implements UserDAO {
+    private static class MySQLUserDAO implements UserDAO {
 
         @Override
         public void createUser(UserData u) throws DataAccessException {
@@ -101,7 +101,7 @@ public class MySqlDataAccess implements DataAccess {
         }
     }
 
-    private static class mySQLAuthDAO implements AuthDAO {
+    private static class MySQLAuthDAO implements AuthDAO {
         @Override
         public void createAuth(AuthData a) throws DataAccessException {
             String sql = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
@@ -153,7 +153,7 @@ public class MySqlDataAccess implements DataAccess {
         }
     }
 
-    private static class mySQLGameDAO implements GameDAO {
+    private static class MySQLGameDAO implements GameDAO {
         @Override
         public int createGame(GameData g) throws DataAccessException {
             String sql = "INSERT INTO game (whiteUsername," +
