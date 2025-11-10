@@ -69,7 +69,7 @@ class MySqlDataAccessTest {
     }
 
     @Test
-    void getAuth_pass() throws Exception {
+    void getAuthPass() throws Exception {
         dao.users().createUser(new UserData("sam", "pw", "sam@example.com"));
         dao.auths().createAuth(new AuthData("tok123", "sam"));
         var a = dao.auths().getAuth("tok123");
