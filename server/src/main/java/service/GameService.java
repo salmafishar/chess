@@ -51,7 +51,17 @@ public class GameService {
     }
 
     public JoinResult joinGame(JoinRequest request) throws DataAccessException {
+        if (request == null) {
+            throw new DataAccessException("bad request");
+        }
+        var t = request.authToken();
+        if (t == null) {
+            throw new DataAccessException("unauthorized");
+        }
         var auth = dataAccess.auths().getAuth(request.authToken());
+        if (auth == null) {
+            throw new DataAccessException("unauthorized");
+        }
         var username = auth.username();
         if (request.gameID() == null) {
             throw new DataAccessException("bad request");
