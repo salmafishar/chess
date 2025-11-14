@@ -71,7 +71,7 @@ public class DatabaseManager {
              var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to create database", ex);
+            throw new DataAccessException("failed to create database", ex, DataAccessException.Code.ServerError);
         }
     }
 
@@ -85,7 +85,7 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-            throw new DataAccessException("failed to configure database", e);
+            throw new DataAccessException("failed to configure database", e, DataAccessException.Code.ServerError);
         }
     }
 
@@ -95,7 +95,7 @@ public class DatabaseManager {
             conn.setCatalog(databaseName);
             return conn;
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to get connection", ex);
+            throw new DataAccessException("failed to get connection", ex, DataAccessException.Code.ServerError);
         }
     }
 

@@ -42,7 +42,7 @@ public class MySqlDataAccess implements DataAccess {
             }
             System.out.println("The tables have been cleared");
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to clear database", ex);
+            throw new DataAccessException("failed to clear database", ex, DataAccessException.Code.ServerError);
         }
     }
 
@@ -73,9 +73,9 @@ public class MySqlDataAccess implements DataAccess {
                 ps.setString(3, u.email());
                 ps.executeUpdate();
             } catch (java.sql.SQLIntegrityConstraintViolationException duplicate) {
-                throw new DataAccessException("Username Already exists", duplicate);
+                throw new DataAccessException("Username Already exists", duplicate, DataAccessException.Code.ServerError);
             } catch (SQLException e) {
-                throw new DataAccessException("Error creating user", e);
+                throw new DataAccessException("Error creating user", e, DataAccessException.Code.ServerError);
             }
         }
 
@@ -95,7 +95,7 @@ public class MySqlDataAccess implements DataAccess {
                     }
                 }
             } catch (SQLException e) {
-                throw new DataAccessException("failed to get user", e);
+                throw new DataAccessException("failed to get user", e, DataAccessException.Code.ServerError);
             }
             return null;
         }
@@ -111,9 +111,9 @@ public class MySqlDataAccess implements DataAccess {
                 ps.setString(2, a.username());
                 ps.executeUpdate();
             } catch (java.sql.SQLIntegrityConstraintViolationException duplicate) {
-                throw new DataAccessException("Token already exists", duplicate);
+                throw new DataAccessException("Token already exists", duplicate, DataAccessException.Code.ServerError);
             } catch (SQLException e) {
-                throw new DataAccessException("failed to create auth", e);
+                throw new DataAccessException("failed to create auth", e, DataAccessException.Code.ServerError);
             }
         }
 
@@ -133,7 +133,7 @@ public class MySqlDataAccess implements DataAccess {
                     throw new DataAccessException("Unauthorized");
                 }
             } catch (SQLException e) {
-                throw new DataAccessException("failed to get token", e);
+                throw new DataAccessException("failed to get token", e, DataAccessException.Code.ServerError);
             }
         }
 
@@ -148,7 +148,7 @@ public class MySqlDataAccess implements DataAccess {
                     throw new DataAccessException("Token is not deleted");
                 }
             } catch (SQLException e) {
-                throw new DataAccessException("failed to delete token", e);
+                throw new DataAccessException("failed to delete token", e, DataAccessException.Code.ServerError);
             }
         }
     }
@@ -181,7 +181,7 @@ public class MySqlDataAccess implements DataAccess {
                 }
                 throw new DataAccessException("failed to get generated gameID");
             } catch (SQLException e) {
-                throw new DataAccessException("Failed to create game", e);
+                throw new DataAccessException("Failed to create game", e, DataAccessException.Code.ServerError);
             }
         }
 
@@ -202,7 +202,7 @@ public class MySqlDataAccess implements DataAccess {
                     throw new DataAccessException("game not found");
                 }
             } catch (SQLException e) {
-                throw new DataAccessException("failed to get game", e);
+                throw new DataAccessException("failed to get game", e, DataAccessException.Code.ServerError);
             }
         }
 
@@ -223,7 +223,7 @@ public class MySqlDataAccess implements DataAccess {
                 }
                 return out;
             } catch (SQLException e) {
-                throw new DataAccessException("failed to list games", e);
+                throw new DataAccessException("failed to list games", e, DataAccessException.Code.ServerError);
             }
         }
 
@@ -256,7 +256,7 @@ public class MySqlDataAccess implements DataAccess {
                     throw new DataAccessException("game not found");
                 }
             } catch (SQLException e) {
-                throw new DataAccessException("failed to update game", e);
+                throw new DataAccessException("failed to update game", e, DataAccessException.Code.ServerError);
             }
         }
     }
