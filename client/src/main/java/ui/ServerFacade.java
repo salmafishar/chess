@@ -125,6 +125,56 @@ public class ServerFacade {
         var res = sendRequest(req);
         return handleResponse(res, LoginRequest.class);
     }
+
+    /*
+    request: token
+    result: {}
+    URL path	-> /session
+    HTTP Method ->	DELETE
+     */
+    public LogoutResult logout(String token) throws DataAccessException {
+        var req = buildRequestAuth("DELETE", "/session", null, token);
+        var res = sendRequest(req);
+        handleResponse(res, null);
+        return new LogoutResult();
+    }
+    /*
+    request: token
+    result: List<GameData> games
+    URL path	-> /game
+    HTTP Method ->	GET
+     */
+
+    public ListResult list(ListRequest request) throws DataAccessException {
+        var req = buildRequestAuth("GET", "/game", null, request.authToken());
+        var res = sendRequest(req);
+        return handleResponse(res, ListRequest.class);
+    }
+
+    /*
+    request: token, gameName
+    result: gameID
+    URL path	-> /game
+    HTTP Method ->	POST
+     */
+    public CreateRequest create(CreateRequest request) throws DataAccessException {
+        var req = buildRequest("POST", "/game", request);
+        var res = sendRequest(req);
+        return handleResponse(res, CreateRequest.class);
+    }
+
+    /*
+    request: token, id ,color
+    result:
+    URL path	-> /game
+    HTTP Method ->	PUT
+     */
+    public JoinRequest join(JoinRequest request) throws DataAccessException {
+        var req = buildRequest("PUT", "/game", request);
+        var res = sendRequest(req);
+        return handleResponse(res, JoinRequest.class);
+    }
+
 }
 
 /*
