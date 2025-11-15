@@ -52,4 +52,19 @@ public class ServerFacadeTests {
         var req2 = new RegisterRequest("salma", "pass", "email2@byu.edu");
         assertThrows(Exception.class, () -> facade.register(req2));
     }
+
+    @Test
+    public void loginSuccess() throws Exception {
+        var register = new RegisterRequest("salma", "pass", "email@byu.edu");
+        var registerResult = facade.register(register);
+        var req = new LoginRequest("salma", "pass");
+        var result = facade.login(req);
+        Assertions.assertEquals("salma", result.username());
+    }
+
+    @Test
+    public void loginFail() {
+        var req = new LoginRequest("salma", "pass");
+        assertThrows(Exception.class, () -> facade.login(req));
+    }
 }
