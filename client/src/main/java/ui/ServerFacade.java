@@ -62,6 +62,17 @@ public class ServerFacade {
         return request.build();
     }
 
+    private HttpRequest buildRequestAuth(String method, String path, Object body, String token) {
+        var request = HttpRequest.newBuilder().
+                uri(URI.create(serverUrl + path)).method(method, makeRequestBody(null));
+        if (token != null) {
+            request.setHeader("Authorization", token);
+        } else {
+            return buildRequest(method, path, body);
+        }
+        return request.build();
+    }
+
     private BodyPublisher makeRequestBody(Object request) {
         if (request != null) {
             return BodyPublishers.ofString(new Gson().toJson(request));
