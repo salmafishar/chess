@@ -67,4 +67,21 @@ public class ServerFacadeTests {
         var req = new LoginRequest("salma", "pass");
         assertThrows(Exception.class, () -> facade.login(req));
     }
+
+    @Test
+    public void logoutSuccess() throws Exception {
+        facade.register(new RegisterRequest("salma", "pass", "email@byu.edu"));
+        var login = facade.login(new LoginRequest("salma", "pass"));
+        var token = login.authToken();
+
+        assertDoesNotThrow(() -> facade.logout(token));
+    }
+
+    @Test
+    public void logoutFailInvalid() throws Exception {
+//        facade.register(new RegisterRequest("salma", "pass", "email@byu.edu"));
+//        var login = facade.login(new LoginRequest("salma", "pass"));
+//        var token = login.authToken();
+        assertThrows(Exception.class, () -> facade.logout("token + 1"));
+    }
 }
