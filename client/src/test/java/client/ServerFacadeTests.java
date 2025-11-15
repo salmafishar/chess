@@ -23,6 +23,12 @@ public class ServerFacadeTests {
     /*
     write a test to clear database between each test, by using `@BeforeEach`
      */
+
+    @BeforeEach
+    public void clearDB() throws Exception {
+        facade.clear();
+    }
+
     @AfterAll
     static void stopServer() {
         server.stop();
