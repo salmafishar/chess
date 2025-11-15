@@ -106,6 +106,25 @@ public class ServerFacade {
         var res = sendRequest(req);
         handleResponse(res, null);
     }
+
+    public RegisterResult register(RegisterRequest request) throws DataAccessException {
+        var req = buildRequest("POST", "/user", request);
+        var res = sendRequest(req);
+        return handleResponse(res, RegisterResult.class);
+    }
+
+    /*
+    request: name, pass
+    result: name, token
+    URL path	-> /session
+    HTTP Method ->	POST
+
+     */
+    public LoginRequest login(LoginRequest request) throws DataAccessException {
+        var req = buildRequest("POST", "/session", request);
+        var res = sendRequest(req);
+        return handleResponse(res, LoginRequest.class);
+    }
 }
 
 /*
