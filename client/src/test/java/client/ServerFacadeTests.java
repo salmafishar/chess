@@ -84,4 +84,18 @@ public class ServerFacadeTests {
 //        var token = login.authToken();
         assertThrows(Exception.class, () -> facade.logout("token + 1"));
     }
+
+    @Test
+    public void listSuccess() throws Exception {
+        facade.register(new RegisterRequest("salma", "pass", "email@byu.edu"));
+        var login = facade.login(new LoginRequest("salma", "pass"));
+        var token = login.authToken();
+        var gameList = facade.list(new ListRequest(token));
+        assertTrue(gameList.games().isEmpty());
+    }
+
+    @Test
+    public void listFail() {
+        assertThrows(Exception.class, () -> facade.list(new ListRequest("fakeToken")));
+    }
 }
