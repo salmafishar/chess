@@ -115,4 +115,28 @@ public class ServerFacadeTests {
     public void createFail() {
         assertThrows(Exception.class, () -> facade.create("fake", "blank"));
     }
+
+    @Test
+    public void joinSuccess() throws Exception {
+        facade.register(new RegisterRequest("salma", "pass", "email@byu.edu"));
+        var login = facade.login(new LoginRequest("salma", "pass"));
+        var token = login.authToken();
+
+        var createReq = new CreateRequest(token, "game1");
+        var createRes = facade.create(token, createReq.gameName());
+        facade.join(token, createRes.gameID(), "white");
+        var gameList = facade.list(new ListRequest(token));
+        Assertions.assertEquals("salma", gameList.games().getFirst().whiteUsername());
+    }
+
+    @Test
+    public void joinFail() throws DataAccessException {
+        facade.register(new RegisterRequest("salma", "pass", "email@byu.edu"));
+        var login = facade.login(new LoginRequest("salma", "pass"));
+        var token = login.authToken();
+
+        var createReq = new CreateRequest(token, "game1");
+        var createRes = facade.create(token, createReq.gameName());
+        assertThrows(Exception.class, () -> facade.join(token + 1, createRes.gameID(), "white"));
+    }
 }
