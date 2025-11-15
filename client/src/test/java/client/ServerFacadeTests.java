@@ -98,4 +98,21 @@ public class ServerFacadeTests {
     public void listFail() {
         assertThrows(Exception.class, () -> facade.list(new ListRequest("fakeToken")));
     }
+
+    @Test
+    public void createSuccess() throws Exception {
+        facade.register(new RegisterRequest("salma", "pass", "email@byu.edu"));
+        var login = facade.login(new LoginRequest("salma", "pass"));
+        var token = login.authToken();
+
+        var createReq = new CreateRequest(token, "game1");
+        facade.create(token, createReq.gameName());
+        var gameList = facade.list(new ListRequest(token));
+        assertEquals(1, gameList.games().size());
+    }
+
+    @Test
+    public void createFail() {
+        assertThrows(Exception.class, () -> facade.create("fake", "blank"));
+    }
 }
