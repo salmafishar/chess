@@ -1,17 +1,21 @@
 package client;
 
+import dataaccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import server.Server;
+import service.requests.CreateRequest;
+import service.requests.ListRequest;
+import service.requests.LoginRequest;
 import service.requests.RegisterRequest;
 import ui.ServerFacade;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
 
-    private static Server server;
     static ServerFacade facade;
+    private static Server server;
 
     @BeforeAll
     public static void init() {
@@ -48,7 +52,7 @@ public class ServerFacadeTests {
     @Test
     public void registerFail() throws Exception {
         var req = new RegisterRequest("salma", "pass", "email@byu.edu");
-        var result = facade.register(req);
+        facade.register(req);
         var req2 = new RegisterRequest("salma", "pass", "email2@byu.edu");
         assertThrows(Exception.class, () -> facade.register(req2));
     }
@@ -56,7 +60,7 @@ public class ServerFacadeTests {
     @Test
     public void loginSuccess() throws Exception {
         var register = new RegisterRequest("salma", "pass", "email@byu.edu");
-        var registerResult = facade.register(register);
+        facade.register(register);
         var req = new LoginRequest("salma", "pass");
         var result = facade.login(req);
         Assertions.assertEquals("salma", result.username());
@@ -78,7 +82,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void logoutFailInvalid() throws Exception {
+    public void logoutFailInvalid() {
 //        facade.register(new RegisterRequest("salma", "pass", "email@byu.edu"));
 //        var login = facade.login(new LoginRequest("salma", "pass"));
 //        var token = login.authToken();

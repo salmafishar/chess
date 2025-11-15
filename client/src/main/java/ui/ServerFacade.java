@@ -2,8 +2,8 @@ package ui;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import service.requests.RegisterRequest;
-import service.results.RegisterResult;
+import service.requests.*;
+import service.results.*;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -18,7 +18,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 
 call the APIs implemented in the server
 mirror the api on the server,
-register.. directly communicate with HDP handlers
+register, etc... directly communicate with HDP handlers
 
  it needs to know the host name and port number
  has build request, send request, handle response
@@ -38,20 +38,6 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
-
-    /*
-      request: name, pass ,email
-      result: name, token
-      URL path  -> 	/user
-      HTTP Method ->  POST
-     */
-    public RegisterResult register(RegisterRequest request) throws DataAccessException {
-        var req = buildRequest("POST", "/user", request);
-        var res = sendRequest(req);
-        return handleResponse(res, RegisterResult.class);
-    }
-
-
     private HttpRequest buildRequest(String method, String path, Object body) {
         var request = HttpRequest.newBuilder().
                 uri(URI.create(serverUrl + path)).
@@ -64,7 +50,7 @@ public class ServerFacade {
 
     private HttpRequest buildRequestAuth(String method, String path, Object body, String token) {
         var request = HttpRequest.newBuilder().
-                uri(URI.create(serverUrl + path)).method(method, makeRequestBody(null));
+                uri(URI.create(serverUrl + path)).method(method, makeRequestBody(body));
         if (token != null) {
             request.setHeader("Authorization", token);
         } else {
@@ -124,73 +110,37 @@ public class ServerFacade {
         return handleResponse(res, RegisterResult.class);
     }
 
-    /*
-    request: name, pass
-    result: name, token
-    URL path	-> /session
-    HTTP Method ->	POST
-
-     */
-    public LoginRequest login(LoginRequest request) throws DataAccessException {
+    public LoginResult login(LoginRequest request) throws DataAccessException {
         var req = buildRequest("POST", "/session", request);
         var res = sendRequest(req);
-        return handleResponse(res, LoginRequest.class);
+        return handleResponse(res, LoginResult.class);
     }
 
-    /*
-    request: token
-    result: {}
-    URL path	-> /session
-    HTTP Method ->	DELETE
-     */
     public LogoutResult logout(String token) throws DataAccessException {
         var req = buildRequestAuth("DELETE", "/session", null, token);
         var res = sendRequest(req);
         handleResponse(res, null);
         return new LogoutResult();
     }
-    /*
-    request: token
-    result: List<GameData> games
-    URL path	-> /game
-    HTTP Method ->	GET
-     */
 
     public ListResult list(ListRequest request) throws DataAccessException {
         var req = buildRequestAuth("GET", "/game", null, request.authToken());
         var res = sendRequest(req);
-        return handleResponse(res, ListRequest.class);
+        return handleResponse(res, ListResult.class);
     }
 
-    /*
-    request: token, gameName
-    result: gameID
-    URL path	-> /game
-    HTTP Method ->	POST
-     */
-    public CreateRequest create(CreateRequest request) throws DataAccessException {
-        var req = buildRequest("POST", "/game", request);
+    public CreateResult create(String token, String gameName) throws DataAccessException {
+        CreateRequest body = new CreateRequest(token, gameName);
+        var req = buildRequestAuth("POST", "/game", body, token);
         var res = sendRequest(req);
-        return handleResponse(res, CreateRequest.class);
+        return handleResponse(res, CreateResult.class);
     }
 
-    /*
-    request: token, id ,color
-    result:
-    URL path	-> /game
-    HTTP Method ->	PUT
-     */
-    public JoinRequest join(JoinRequest request) throws DataAccessException {
-        var req = buildRequest("PUT", "/game", request);
+    public void join(String token, Integer gameID, String playerColor) throws DataAccessException {
+        JoinRequest body = new JoinRequest(token, gameID, playerColor);
+        var req = buildRequestAuth("PUT", "/game", body, token);
         var res = sendRequest(req);
-        return handleResponse(res, JoinRequest.class);
+        handleResponse(res, null);
     }
 
 }
-
-/*
-- preLogin UI: after registration, we automatically enter the signed in state. No need to log in.
-- postLogin UI: make listGame numbering dependant of the game IDs
-- gamePlay UI: make sure the board is printed correctly.
-- UI requirements: printing readable errors, make sure the code doesn't crash. Make sure to handle invalid inputs.
- */
