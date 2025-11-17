@@ -11,7 +11,20 @@ public class PreLoginUI implements ClientUI {
     }
 
     @Override
-    public String handle(String cmd, String[] params) {
+    public String handle(String cmd, String[] params) throws DataAccessException {
+        // name, password, email
+        if (cmd.equalsIgnoreCase("register")) {
+            return register(params);
+        }
+        if (cmd.equalsIgnoreCase("login")) {
+            return "blah";
+        }
+        if (cmd.equalsIgnoreCase("quit")) {
+            return "blah";
+        }
+        if (cmd.equalsIgnoreCase("help")) {
+            return "blah";
+        }
         return "";
     }
 
