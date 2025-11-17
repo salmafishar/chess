@@ -44,5 +44,18 @@ public class PostLoginUI implements ClientUI {
         authToken = null;
         return "You are now logged out.";
     }
+
+    // String authToken, String gameName
+    public String create(String[] params) throws DataAccessException {
+        if (params.length != 1) {
+            return "To create a game, please type in: create <GameName>";
+        }
+        String gameName = params[0];
+        var create = server.create(authToken, gameName);
+        return String.format("Now, you have created the game %s. The game ID is %d.\n" +
+                "To join the game, please type in join <GameID> <WHITE | BLACK>", gameName, create.gameID());
+
+
+    }
 }
 
