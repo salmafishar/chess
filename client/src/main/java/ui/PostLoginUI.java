@@ -79,5 +79,32 @@ public class PostLoginUI implements ClientUI {
         }
         return sb.toString();
     }
+
+    // token, id ,color
+    public String join(String[] params) throws DataAccessException {
+        if (params.length != 2) {
+            return "To join a game, please type in: join <GameID> <WHITE | BLACK>";
+        }
+        if (listGames == null || listGames.isEmpty()) {
+            return "You need to list your games first. To do so, type list";
+        }
+        int index;
+        try {
+            index = Integer.parseInt(params[0]);
+        } catch (Exception e) {
+            return "The gameID must be an integer";
+        }
+        if (index < 1 || index > listGames.size()) {
+            return "Invalid gameID. Type list to see the available games";
+        }
+        var game = listGames.get(index - 1);
+        int gameID = game.gameID();
+        String color = params[1].toUpperCase();
+        if (!color.equals("WHITE") && !color.equals("BLACK")) {
+            return "Color must be WHITE or BLACK. Example: join 1 white";
+        }
+        server.join(authToken, gameID, color);
+        return String.format("You joined %s as %s", game.gameName(), color.toLowerCase());
+    }
 }
 
