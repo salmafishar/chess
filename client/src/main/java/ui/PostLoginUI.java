@@ -19,5 +19,13 @@ public class PostLoginUI implements ClientUI {
     public String handle(String cmd, String[] params) {
         return "Post-login commands not implemented yet.";
     }
+
+    // token
+    public String logout(String[] params) throws DataAccessException {
+        var logout = server.logout(authToken);
+        repl.switchToPreLogin();
+        authToken = null;
+        return "You are now logged out.";
+    }
 }
 
