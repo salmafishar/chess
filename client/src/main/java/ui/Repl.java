@@ -26,13 +26,12 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class Repl {
-    private final ServerFacade server;
     private final PreLoginUI preLogin;
     private final PostLoginUI postLogin;
     private UIMode state = UIMode.PreLogin;
 
     public Repl(String serverURL) {
-        this.server = new ServerFacade(serverURL);
+        ServerFacade server = new ServerFacade(serverURL);
         this.preLogin = new PreLoginUI(server, this);
         this.postLogin = new PostLoginUI(server, this);
     }
@@ -66,8 +65,8 @@ public class Repl {
 
         ClientUI ui = (state == UIMode.PreLogin) ? preLogin : postLogin;
         try {
-            String[] tokens = input.toLowerCase().split(" ");
-            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] tokens = input.trim().split("\\s+");
+            String cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             if (cmd.equals("quit") || cmd.equals("q")) {
                 return "quit";

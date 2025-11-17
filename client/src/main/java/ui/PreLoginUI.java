@@ -5,9 +5,34 @@ package ui;
 
 - UI requirements: printing readable errors, make sure the code doesn't crash. Make sure to handle invalid inputs.
  */
+/*
+
+When the user first opens your Chess client application they can execute any of the Prelogin commands.
+
+Help	Displays text informing the user what actions they can take.
+Quit	Exits the program.
+Login	Prompts the user to input login information. Calls the server login API to login the user. When successfully logged in, the client should transition to the Postlogin UI.
+Register	Prompts the user to input registration information. Calls the server register API to register and login the user. If successfully registered, the client should be logged in and transition to the Postlogin UI.
+
+ */
+
+import dataaccess.DataAccessException;
+import service.requests.LoginRequest;
+import service.requests.RegisterRequest;
+
+/*
+Things to test out:
+1. # of args
+2. types of args
+3. rejected arg (like wrong password, wrong
+ */
 public class PreLoginUI implements ClientUI {
+    private final ServerFacade server;
+    private final Repl repl;
 
     public PreLoginUI(ServerFacade server, Repl repl) {
+        this.server = server;
+        this.repl = repl;
     }
 
     @Override
@@ -17,15 +42,20 @@ public class PreLoginUI implements ClientUI {
             return register(params);
         }
         if (cmd.equalsIgnoreCase("login")) {
-            return "blah";
+            return login(params);
         }
         if (cmd.equalsIgnoreCase("quit")) {
-            return "blah";
+            return "quit";
         }
         if (cmd.equalsIgnoreCase("help")) {
-            return "blah";
+            return """
+                    - register <USERNAME> <PASSWORD> <EMAIL>
+                    - login <USERNAME> <PASSWORD>
+                    - quit
+                    - help
+                    """;
         }
-        return "";
+        return "Unknown command. Type 'help' to see available commands.";
     }
 
     public String register(String[] params) throws DataAccessException {
@@ -51,6 +81,6 @@ public class PreLoginUI implements ClientUI {
         var loginRequest = new LoginRequest(name, password);
         var login = server.login(loginRequest);
         repl.switchToPostLogin();
-        return "Welcome back %s." + login.username();
+        return String.format("Welcome back %s.", login.username());
     }
 }
