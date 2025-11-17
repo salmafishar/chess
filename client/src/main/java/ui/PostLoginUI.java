@@ -57,5 +57,27 @@ public class PostLoginUI implements ClientUI {
 
 
     }
+
+    // String authToken,
+    public String list(String[] params) throws DataAccessException {
+        var listRequest = new ListRequest(authToken);
+        var list = server.list(listRequest);
+        var games = list.games();
+        if (games == null || games.isEmpty()) {
+            return "There were no games found";
+        }
+        int index = 1;
+        var sb = new StringBuilder();
+        for (var g : games) {
+            sb.append(String.format(
+                    "%d. %s (white: %s, black: %s)\n",
+                    index++,
+                    g.gameName(),
+                    g.whiteUsername() == null ? "-" : g.whiteUsername(),
+                    g.blackUsername() == null ? "-" : g.blackUsername()
+            ));
+        }
+        return sb.toString();
+    }
 }
 
