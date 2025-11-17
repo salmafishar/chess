@@ -16,8 +16,25 @@ public class PostLoginUI implements ClientUI {
     }
 
     @Override
-    public String handle(String cmd, String[] params) {
-        return "Post-login commands not implemented yet.";
+    public String handle(String cmd, String[] params) throws DataAccessException {
+
+        if (cmd.equalsIgnoreCase("logout")) {
+            return logout(params);
+        }
+        if (cmd.equalsIgnoreCase("quit")) {
+            return "quit";
+        }
+        if (cmd.equalsIgnoreCase("help")) {
+            return """
+                    - create <GameName>
+                    - list
+                    - observe <GameID>
+                    - logout
+                    - quit
+                    - help
+                    """;
+        }
+        return "Unknown command. Type 'help' to see available commands.";
     }
 
     // token
