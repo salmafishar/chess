@@ -40,4 +40,17 @@ public class PreLoginUI implements ClientUI {
         repl.switchToPostLogin();
         return String.format("You are now logged in. Your username is %s", register.username());
     }
+
+    // name password
+    public String login(String[] params) throws DataAccessException {
+        if (params.length != 2) {
+            return "To login, please type in: login <USERNAME> <PASSWORD>";
+        }
+        String name = params[0];
+        String password = params[1];
+        var loginRequest = new LoginRequest(name, password);
+        var login = server.login(loginRequest);
+        repl.switchToPostLogin();
+        return "Welcome back %s." + login.username();
+    }
 }
