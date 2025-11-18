@@ -106,5 +106,28 @@ public class PostLoginUI implements ClientUI {
         server.join(authToken, gameID, color);
         return String.format("You joined %s as %s", game.gameName(), color.toLowerCase());
     }
+
+    public String observe(String[] params) throws DataAccessException {
+        if (params.length != 1) {
+            return "To observe a game, please type in: observe <GameID>;";
+        }
+        if (listGames == null || listGames.isEmpty()) {
+            return "You need to list your games first. To do so, type list";
+        }
+        int index;
+        try {
+            index = Integer.parseInt(params[0]);
+        } catch (Exception e) {
+            return "The gameID must be an integer";
+        }
+        if (index < 1 || index > listGames.size()) {
+            return "Invalid gameID. Type list to see the available games";
+        }
+        var game = listGames.get(index - 1);
+        int gameID = game.gameID();
+
+        server.join(authToken, gameID, null);
+        return String.format("You now are observing %s ", game.gameName());
+    }
 }
 
