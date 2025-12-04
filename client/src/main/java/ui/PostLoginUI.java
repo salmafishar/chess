@@ -5,12 +5,6 @@ import chess.ChessGame;
 import model.GameData;
 import requests.ListRequest;
 
-/*
-- postLogin UI: make listGame numbering dependant of the game IDs
-- gamePlay UI: make sure the board is printed correctly.
-- UI requirements: printing readable errors, make sure the code doesn't crash. Make sure to handle invalid inputs.
-
- */
 public class PostLoginUI implements ClientUI {
     private final ServerFacade server;
     private final Repl repl;
