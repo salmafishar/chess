@@ -5,10 +5,10 @@ import dataaccess.MemoryDataAccess;
 import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.requests.CreateRequest;
-import service.requests.JoinRequest;
-import service.requests.ListRequest;
-import service.requests.RegisterRequest;
+import requests.CreateRequest;
+import requests.JoinRequest;
+import requests.ListRequest;
+import requests.RegisterRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 

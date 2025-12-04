@@ -3,9 +3,9 @@ package server.handlers;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
+import requests.CreateRequest;
+import results.CreateResult;
 import service.GameService;
-import service.requests.CreateRequest;
-import service.results.CreateResult;
 
 import java.util.Map;
 

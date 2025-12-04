@@ -7,12 +7,12 @@ After performing its purpose, it returns a corresponding Result object containin
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.GameData;
-import service.requests.CreateRequest;
-import service.requests.JoinRequest;
-import service.requests.ListRequest;
-import service.results.CreateResult;
-import service.results.JoinResult;
-import service.results.ListResult;
+import requests.CreateRequest;
+import requests.JoinRequest;
+import requests.ListRequest;
+import results.CreateResult;
+import results.JoinResult;
+import results.ListResult;
 
 import java.util.ArrayList;
 
@@ -50,7 +50,7 @@ public class GameService {
         return new CreateResult(id);
     }
 
-    public JoinResult joinGame(JoinRequest request) throws DataAccessException {
+    public void joinGame(JoinRequest request) throws DataAccessException {
         if (request == null) {
             throw new DataAccessException("bad request");
         }
@@ -88,6 +88,6 @@ public class GameService {
             g = new GameData(g.gameID(), g.whiteUsername(), username, g.gameName());
         }
         dataAccess.games().updateGame(g);
-        return new JoinResult();
+        new JoinResult();
     }
 }

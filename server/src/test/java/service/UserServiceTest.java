@@ -3,9 +3,9 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import org.junit.jupiter.api.Test;
-import service.requests.LoginRequest;
-import service.requests.LogoutRequest;
-import service.requests.RegisterRequest;
+import requests.LoginRequest;
+import requests.LogoutRequest;
+import requests.RegisterRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 

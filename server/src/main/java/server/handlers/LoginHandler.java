@@ -3,9 +3,9 @@ package server.handlers;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
+import requests.LoginRequest;
+import results.LoginResult;
 import service.UserService;
-import service.requests.LoginRequest;
-import service.results.LoginResult;
 
 import java.util.Map;
 

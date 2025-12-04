@@ -2,9 +2,8 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
-import dataaccess.DataAccessException;
 import model.GameData;
-import service.requests.ListRequest;
+import requests.ListRequest;
 
 /*
 - postLogin UI: make listGame numbering dependant of the game IDs
@@ -33,7 +32,7 @@ public class PostLoginUI implements ClientUI {
     }
 
     @Override
-    public String handle(String cmd, String[] params) throws DataAccessException {
+    public String handle(String cmd, String[] params) throws Exception {
 
         if (cmd.equalsIgnoreCase("logout")) {
             return logout(params);
@@ -68,14 +67,14 @@ public class PostLoginUI implements ClientUI {
     }
 
     // token
-    public String logout(String[] params) throws DataAccessException {
+    public String logout(String[] params) {
         repl.switchToPreLogin();
         authToken = null;
         return "You are now logged out.";
     }
 
     // String authToken, String gameName
-    public String create(String[] params) throws DataAccessException {
+    public String create(String[] params) throws Exception {
         if (params.length != 1) {
             return "To create a game, please type in: create <GameName>";
         }
@@ -86,7 +85,7 @@ public class PostLoginUI implements ClientUI {
     }
 
     // String authToken,
-    public String list(String[] params) throws DataAccessException {
+    public String list(String[] params) throws Exception {
         var listRequest = new ListRequest(authToken);
         var list = server.list(listRequest);
         var games = list.games();
@@ -109,7 +108,7 @@ public class PostLoginUI implements ClientUI {
     }
 
     // token, id ,color
-    public String join(String[] params) throws DataAccessException {
+    public String join(String[] params) throws Exception {
         if (params.length != 2) {
             return "To join a game, please type in: join <GameID> <WHITE | BLACK>";
         }

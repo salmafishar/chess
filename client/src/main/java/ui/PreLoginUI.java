@@ -16,9 +16,8 @@ Register	Prompts the user to input registration information. Calls the server re
 
  */
 
-import dataaccess.DataAccessException;
-import service.requests.LoginRequest;
-import service.requests.RegisterRequest;
+import requests.LoginRequest;
+import requests.RegisterRequest;
 
 /*
 Things to test out:
@@ -36,7 +35,7 @@ public class PreLoginUI implements ClientUI {
     }
 
     @Override
-    public String handle(String cmd, String[] params) throws DataAccessException {
+    public String handle(String cmd, String[] params) throws Exception {
         // name, password, email
         if (cmd.equalsIgnoreCase("register")) {
             return register(params);
@@ -58,7 +57,7 @@ public class PreLoginUI implements ClientUI {
         return "Unknown command. Type 'help' to see available commands.";
     }
 
-    public String register(String[] params) throws DataAccessException {
+    public String register(String[] params) throws Exception {
         if (params.length != 3) {
             return "To register, please type in: register <USERNAME> <PASSWORD> <EMAIL>";
         }
@@ -74,7 +73,7 @@ public class PreLoginUI implements ClientUI {
     // saved username >> login tyjo 21pi 21pi@by.ed
 
     // name password
-    public String login(String[] params) throws DataAccessException {
+    public String login(String[] params) throws Exception {
         if (params.length != 2) {
             return "To login, please type in: login <USERNAME> <PASSWORD>";
         }

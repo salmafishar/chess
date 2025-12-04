@@ -1,12 +1,11 @@
 package client;
 
-import dataaccess.DataAccessException;
 import org.junit.jupiter.api.*;
 import server.Server;
-import service.requests.CreateRequest;
-import service.requests.ListRequest;
-import service.requests.LoginRequest;
-import service.requests.RegisterRequest;
+import requests.CreateRequest;
+import requests.ListRequest;
+import requests.LoginRequest;
+import requests.RegisterRequest;
 import ui.ServerFacade;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -134,7 +133,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void joinFail() throws DataAccessException {
+    public void joinFail() throws Exception {
         facade.register(new RegisterRequest("salma", "pass", "email@byu.edu"));
         var login = facade.login(new LoginRequest("salma", "pass"));
         var token = login.authToken();
