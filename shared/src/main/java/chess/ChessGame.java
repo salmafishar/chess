@@ -61,12 +61,12 @@ public class ChessGame {
             temp.addPiece(startPosition, null);
 
             ChessPiece moved;
-            if (piece.getPieceType() == ChessPiece.PieceType.PAWN && m.promotionPiece() != null) {
-                moved = new ChessPiece(piece.getTeamColor(), m.promotionPiece());
+            if (piece.getPieceType() == ChessPiece.PieceType.PAWN && m.getPromotionPiece() != null) {
+                moved = new ChessPiece(piece.getTeamColor(), m.getPromotionPiece());
             } else {
                 moved = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
             }
-            temp.addPiece(m.endPosition(), moved);
+            temp.addPiece(m.getEndPosition(), moved);
             if (!isOnBoard(piece.getTeamColor(), temp)) {
                 allowed.add(m);
             }
@@ -105,8 +105,8 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         // remove the piece from `from`, place it at `to`, checking promotion, flipping teamTurn
-        ChessPosition from = move.startPosition();
-        ChessPosition to = move.endPosition();
+        ChessPosition from = move.getStartPosition();
+        ChessPosition to = move.getEndPosition();
         ChessPiece movingPiece = myBoard.getPiece(from);
 
         if (movingPiece == null) {
@@ -122,10 +122,10 @@ public class ChessGame {
         myBoard.addPiece(from, null);
         ChessPiece placed = movingPiece;
         if (movingPiece.getPieceType() == ChessPiece.PieceType.PAWN
-                && move.promotionPiece() != null
+                && move.getPromotionPiece() != null
                 && ((movingPiece.getTeamColor() == TeamColor.WHITE && to.getRow() == 8)
                 || (movingPiece.getTeamColor() == TeamColor.BLACK && to.getRow() == 1))) {
-            placed = new ChessPiece(movingPiece.getTeamColor(), move.promotionPiece());
+            placed = new ChessPiece(movingPiece.getTeamColor(), move.getPromotionPiece());
         }
         myBoard.addPiece(to, placed);
         teamTurn = (teamTurn == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
@@ -145,7 +145,7 @@ public class ChessGame {
             return false;
         }
         for (var m : moves) {
-            if (m.endPosition().equals(target)) {
+            if (m.getEndPosition().equals(target)) {
                 return true;
             }
         }
