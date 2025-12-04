@@ -5,6 +5,16 @@ package ui;
 
 - UI requirements: printing readable errors, make sure the code doesn't crash. Make sure to handle invalid inputs.
  */
+/*
+
+When the user first opens your Chess client application they can execute any of the Prelogin commands.
+
+Help	Displays text informing the user what actions they can take.
+Quit	Exits the program.
+Login	Prompts the user to input login information. Calls the server login API to login the user. When successfully logged in, the client should transition to the Postlogin UI.
+Register	Prompts the user to input registration information. Calls the server register API to register and login the user. If successfully registered, the client should be logged in and transition to the Postlogin UI.
+
+ */
 
 import requests.LoginRequest;
 import requests.RegisterRequest;

@@ -5,6 +5,17 @@ import chess.ChessGame;
 import model.GameData;
 import requests.ListRequest;
 
+/*
+- postLogin UI: make listGame numbering dependant of the game IDs
+- gamePlay UI: make sure the board is printed correctly.
+- UI requirements: printing readable errors, make sure the code doesn't crash. Make sure to handle invalid inputs.
+
+ */
+/*
+
+Play Game	Allows the user to specify which game they want to join and what color they want to play. They should be able to enter the number of the desired game. Your client will need to keep track of which number corresponds to which game from the last time it listed the games. Calls the server join API to join the user to the game.
+Observe Game	Allows the user to specify which game they want to observe. They should be able to enter the number of the desired game. Your client will need to keep track of which number corresponds to which game from the last time it listed the games. Additional functionality will be added in Phase 6.
+ */
 public class PostLoginUI implements ClientUI {
     private final ServerFacade server;
     private final Repl repl;
@@ -104,12 +115,16 @@ public class PostLoginUI implements ClientUI {
         if (listGames == null || listGames.isEmpty()) {
             return "You need to list your games first. To do so, type list";
         }
-        GameData game;
+        int index;
         try {
-            game = getGameByIndex(params[0]);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return e.getMessage();
+            index = Integer.parseInt(params[0]);
+        } catch (Exception e) {
+            return "The gameID must be an integer";
         }
+        if (index < 1 || index > listGames.size()) {
+            return "Invalid gameID. Type list to see the available games";
+        }
+        var game = listGames.get(index - 1);
         int gameID = game.gameID();
         String color = params[1].toUpperCase();
         if (!color.equals("WHITE") && !color.equals("BLACK")) {
@@ -131,12 +146,19 @@ public class PostLoginUI implements ClientUI {
         if (params.length != 1) {
             return "To observe a game, please type in: observe <GameID>;";
         }
-        GameData game;
-        try {
-            game = getGameByIndex(params[0]);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return e.getMessage();
+        if (listGames == null || listGames.isEmpty()) {
+            return "You need to list your games first. To do so, type list";
         }
+        int index;
+        try {
+            index = Integer.parseInt(params[0]);
+        } catch (Exception e) {
+            return "The gameID must be an integer";
+        }
+        if (index < 1 || index > listGames.size()) {
+            return "Invalid gameID. Type list to see the available games";
+        }
+        var game = listGames.get(index - 1);
         int gameID = game.gameID();
         ChessBoard board = new ChessBoard();
         board.resetBoard();
@@ -145,25 +167,5 @@ public class PostLoginUI implements ClientUI {
 
         return String.format("You are now observing \"%s\" (game ID %d).", game.gameName(), gameID);
     }
-
-    private GameData getGameByIndex(String indexStr) {
-        if (listGames == null || listGames.isEmpty()) {
-            throw new IllegalStateException("You need to list your games first. To do so, type list");
-        }
-
-        int index;
-        try {
-            index = Integer.parseInt(indexStr);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("The gameID must be an integer");
-        }
-
-        if (index < 1 || index > listGames.size()) {
-            throw new IllegalArgumentException("Invalid gameID. Type list to see the available games");
-        }
-
-        return listGames.get(index - 1);
-    }
-
 }
 

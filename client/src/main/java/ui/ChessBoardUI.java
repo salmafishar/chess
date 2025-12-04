@@ -88,15 +88,31 @@ public class ChessBoardUI {
             return EMPTY;
         }
 
-        boolean isWhite = piece.getTeamColor() == ChessGame.TeamColor.WHITE;
+        return switch (piece.getTeamColor()) {
+            case WHITE -> getWhiteSymbol(piece);
+            case BLACK -> getBlackSymbol(piece);
+        };
+    }
 
+    private String getWhiteSymbol(ChessPiece piece) {
         return switch (piece.getPieceType()) {
-            case KING -> isWhite ? WHITE_KING : BLACK_KING;
-            case QUEEN -> isWhite ? WHITE_QUEEN : BLACK_QUEEN;
-            case ROOK -> isWhite ? WHITE_ROOK : BLACK_ROOK;
-            case BISHOP -> isWhite ? WHITE_BISHOP : BLACK_BISHOP;
-            case KNIGHT -> isWhite ? WHITE_KNIGHT : BLACK_KNIGHT;
-            case PAWN -> isWhite ? WHITE_PAWN : BLACK_PAWN;
+            case KING -> WHITE_KING;
+            case QUEEN -> WHITE_QUEEN;
+            case ROOK -> WHITE_ROOK;
+            case BISHOP -> WHITE_BISHOP;
+            case KNIGHT -> WHITE_KNIGHT;
+            case PAWN -> WHITE_PAWN;
+        };
+    }
+
+    private String getBlackSymbol(ChessPiece piece) {
+        return switch (piece.getPieceType()) {
+            case KING -> BLACK_KING;
+            case QUEEN -> BLACK_QUEEN;
+            case ROOK -> BLACK_ROOK;
+            case BISHOP -> BLACK_BISHOP;
+            case KNIGHT -> BLACK_KNIGHT;
+            case PAWN -> BLACK_PAWN;
         };
     }
 }
