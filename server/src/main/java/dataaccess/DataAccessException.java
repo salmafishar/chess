@@ -2,7 +2,6 @@ package dataaccess;
 
 import com.google.gson.Gson;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,20 +25,6 @@ public class DataAccessException extends Exception {
         this.code = code;
     }
 
-    public static DataAccessException fromJson(String json) {
-        var map = new Gson().fromJson(json, HashMap.class);
-        var status = Code.valueOf(map.get("status").toString());
-        String message = map.get("message").toString();
-        return new DataAccessException(status, message);
-    }
-
-    public static Code fromHttpStatusCode(int httpStatusCode) {
-        return switch (httpStatusCode) {
-            case 500 -> Code.ServerError;
-            case 400 -> Code.ClientError;
-            default -> throw new IllegalArgumentException("Unknown HTTP status code: " + httpStatusCode);
-        };
-    }
 
     public Code code() {
         return code;
@@ -49,12 +34,6 @@ public class DataAccessException extends Exception {
         return new Gson().toJson(Map.of("message", getMessage(), "status", code));
     }
 
-    public int toHttpStatusCode() {
-        return switch (code) {
-            case ServerError -> 500;
-            case ClientError -> 400;
-        };
-    }
 
     public enum Code {
         ServerError,
