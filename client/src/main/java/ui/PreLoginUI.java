@@ -68,8 +68,10 @@ public class PreLoginUI implements ClientUI {
         var registerRequest = new RegisterRequest(name, password, email);
         var register = server.register(registerRequest);
         repl.switchToPostLogin();
+        repl.postLogin.setAuthToken(register.authToken());
         return String.format("You are now logged in. Your username is %s", register.username());
     }
+    // saved username >> login tyjo 21pi 21pi@by.ed
 
     // name password
     public String login(String[] params) throws DataAccessException {
@@ -80,6 +82,8 @@ public class PreLoginUI implements ClientUI {
         String password = params[1];
         var loginRequest = new LoginRequest(name, password);
         var login = server.login(loginRequest);
+        repl.switchToPostLogin();
+        repl.postLogin.setAuthToken(login.authToken());
         repl.switchToPostLogin();
         return String.format("Welcome back %s.", login.username());
     }

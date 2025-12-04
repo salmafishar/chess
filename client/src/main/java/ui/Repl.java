@@ -26,8 +26,8 @@ import java.util.Scanner;
 import static ui.EscapeSequences.*;
 
 public class Repl {
+    final PostLoginUI postLogin;
     private final PreLoginUI preLogin;
-    private final PostLoginUI postLogin;
     private UIMode state = UIMode.PreLogin;
 
     public Repl(String serverURL) {
@@ -50,7 +50,8 @@ public class Repl {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (true) {
-            System.out.print("\n" + ERASE_LINE + ">>> " + SET_TEXT_COLOR_WHITE);
+
+            System.out.print("\n" + RESET + ">>> " + SET_TEXT_COLOR_WHITE);
             String line = scanner.nextLine();
             result = eval(line);
             if ("quit".equalsIgnoreCase(result) || "q".equalsIgnoreCase(result)) {
@@ -92,6 +93,7 @@ public class Repl {
         return """
                 - create <GameName>
                 - list
+                - join <GameID> <WHITE | BLACK>
                 - observe <GameID>
                 - logout
                 - quit

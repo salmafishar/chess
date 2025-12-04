@@ -1,18 +1,35 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import dataaccess.DataAccessException;
+import model.GameData;
+import service.requests.ListRequest;
+
 /*
 - postLogin UI: make listGame numbering dependant of the game IDs
 - gamePlay UI: make sure the board is printed correctly.
 - UI requirements: printing readable errors, make sure the code doesn't crash. Make sure to handle invalid inputs.
 
  */
+/*
+
+Play Game	Allows the user to specify which game they want to join and what color they want to play. They should be able to enter the number of the desired game. Your client will need to keep track of which number corresponds to which game from the last time it listed the games. Calls the server join API to join the user to the game.
+Observe Game	Allows the user to specify which game they want to observe. They should be able to enter the number of the desired game. Your client will need to keep track of which number corresponds to which game from the last time it listed the games. Additional functionality will be added in Phase 6.
+ */
 public class PostLoginUI implements ClientUI {
     private final ServerFacade server;
     private final Repl repl;
+    private String authToken = null;
+    private java.util.List<GameData> listGames;
 
     public PostLoginUI(ServerFacade server, Repl repl) {
         this.server = server;
         this.repl = repl;
+    }
+
+    public void setAuthToken(String token) {
+        this.authToken = token;
     }
 
     @Override
@@ -24,10 +41,23 @@ public class PostLoginUI implements ClientUI {
         if (cmd.equalsIgnoreCase("quit")) {
             return "quit";
         }
+        if (cmd.equalsIgnoreCase("create")) {
+            return create(params);
+        }
+        if (cmd.equalsIgnoreCase("list")) {
+            return list(params);
+        }
+        if (cmd.equalsIgnoreCase("join")) {
+            return join(params);
+        }
+        if (cmd.equalsIgnoreCase("observe")) {
+            return observe(params);
+        }
         if (cmd.equalsIgnoreCase("help")) {
             return """
                     - create <GameName>
                     - list
+                    - join <GameID> <WHITE | BLACK>
                     - observe <GameID>
                     - logout
                     - quit
@@ -39,7 +69,6 @@ public class PostLoginUI implements ClientUI {
 
     // token
     public String logout(String[] params) throws DataAccessException {
-        var logout = server.logout(authToken);
         repl.switchToPreLogin();
         authToken = null;
         return "You are now logged out.";
@@ -52,10 +81,8 @@ public class PostLoginUI implements ClientUI {
         }
         String gameName = params[0];
         var create = server.create(authToken, gameName);
-        return String.format("Now, you have created the game %s. The game ID is %d.\n" +
+        return String.format("Now, you have created the game `%s`. The game ID is %d.\n" +
                 "To join the game, please type in join <GameID> <WHITE | BLACK>", gameName, create.gameID());
-
-
     }
 
     // String authToken,
@@ -63,6 +90,7 @@ public class PostLoginUI implements ClientUI {
         var listRequest = new ListRequest(authToken);
         var list = server.list(listRequest);
         var games = list.games();
+        listGames = games;
         if (games == null || games.isEmpty()) {
             return "There were no games found";
         }
@@ -104,10 +132,18 @@ public class PostLoginUI implements ClientUI {
             return "Color must be WHITE or BLACK. Example: join 1 white";
         }
         server.join(authToken, gameID, color);
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        ChessGame.TeamColor myColor = color.equals("WHITE")
+                ? ChessGame.TeamColor.WHITE
+                : ChessGame.TeamColor.BLACK;
+
+        new ChessBoardUI().drawBoard(myColor, board, System.out);
+
         return String.format("You joined %s as %s", game.gameName(), color.toLowerCase());
     }
 
-    public String observe(String[] params) throws DataAccessException {
+    public String observe(String[] params) {
         if (params.length != 1) {
             return "To observe a game, please type in: observe <GameID>;";
         }
@@ -125,9 +161,12 @@ public class PostLoginUI implements ClientUI {
         }
         var game = listGames.get(index - 1);
         int gameID = game.gameID();
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        ChessBoardUI ui = new ChessBoardUI();
+        ui.drawBoard(ChessGame.TeamColor.WHITE, board, System.out);
 
-        server.join(authToken, gameID, null);
-        return String.format("You now are observing %s ", game.gameName());
+        return String.format("You are now observing \"%s\" (game ID %d).", game.gameName(), gameID);
     }
 }
 
