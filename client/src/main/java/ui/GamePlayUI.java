@@ -26,8 +26,10 @@ package ui;
  */
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import websocket.ServerMessageHandler;
 import websocket.WebSocketFacade;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 public class GamePlayUI implements ClientUI, ServerMessageHandler {
@@ -38,15 +40,24 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
     private final int gameID;
     private final String serverUrl;
 
-    public GamePlayUI(String authToken, String serverUrl, int gameID, WebSocketFacade ws, ChessGame.TeamColor myColor) {
-        this.ws = ws;
+    /*
+     store token, gameID, color and url
+     create websocket
+     connect
+     */
+    public GamePlayUI(String authToken, String serverUrl, int gameID, ChessGame.TeamColor myColor) throws DataAccessException {
+        this.authToken = authToken;
+        this.myColor = myColor;
         this.gameID = gameID;
         this.serverUrl = serverUrl;
+        this.ws = new WebSocketFacade(serverUrl, this);
+
+        UserGameCommand cmd = new UserGameCommand(
+                UserGameCommand.CommandType.CONNECT, authToken, gameID
+        );
+        ws.SendCommands(cmd);
     }
 
-    public void setAuthToken(String token) {
-        this.authToken = token;
-    }
 
     @Override
     public String handle(String cmd, String[] params) throws Exception {
