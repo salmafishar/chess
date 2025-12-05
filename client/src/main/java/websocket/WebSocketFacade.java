@@ -34,5 +34,43 @@ Closing websocket:
         - connection stays open
  */
 
-public class WebSocketFacade {
+import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import jakarta.websocket.*;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class WebSocketFacade extends Endpoint {
+    Session session;
+    ServerMessageHandler notificationHandler;
+
+    // unused
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
+    }
+
+    // connect
+    public WebSocketFacade(String url, ServerMessageHandler notificationHandler) throws DataAccessException {
+        try {
+            url = url.replace("http", "ws");
+            URI socketURI = new URI(url + "/ws");
+            this.notificationHandler = notificationHandler;
+
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            this.session = container.connectToServer(this, socketURI);
+
+            // setting a message handler
+            this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+                @Override
+                public void onMessage(String string) {
+                    ServerMessageHandler notification = new Gson().fromJson(string, ServerMessageHandler.class);
+                    notificationHandler.notify(notification);
+                }
+            });
+        } catch (DeploymentException | URISyntaxException | IOException e) {
+            throw new DataAccessException(DataAccessException.Code.ServerError, e.getMessage());
+        }
+    }
 }
