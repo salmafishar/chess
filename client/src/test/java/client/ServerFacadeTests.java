@@ -82,9 +82,6 @@ public class ServerFacadeTests {
 
     @Test
     public void logoutFailInvalid() {
-//        facade.register(new RegisterRequest("salma", "pass", "email@byu.edu"));
-//        var login = facade.login(new LoginRequest("salma", "pass"));
-//        var token = login.authToken();
         assertThrows(Exception.class, () -> facade.logout("token + 1"));
     }
 
