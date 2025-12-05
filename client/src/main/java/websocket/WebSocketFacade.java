@@ -37,6 +37,7 @@ Closing websocket:
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import jakarta.websocket.*;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.net.URI;
@@ -44,7 +45,7 @@ import java.net.URISyntaxException;
 
 public class WebSocketFacade extends Endpoint {
     Session session;
-    ServerMessageHandler notificationHandler;
+    ServerMessageHandler msgHandler;
 
     // unused
     @Override
@@ -52,11 +53,11 @@ public class WebSocketFacade extends Endpoint {
     }
 
     // connect
-    public WebSocketFacade(String url, ServerMessageHandler notificationHandler) throws DataAccessException {
+    public WebSocketFacade(String url, ServerMessageHandler msgHandler) throws DataAccessException {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
-            this.notificationHandler = notificationHandler;
+            this.msgHandler = msgHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
@@ -65,8 +66,8 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String string) {
-                    ServerMessageHandler notification = new Gson().fromJson(string, ServerMessageHandler.class);
-                    notificationHandler.notify(notification);
+                    ServerMessage message = new Gson().fromJson(string, ServerMessage.class);
+                    msgHandler.notify(message);
                 }
             });
         } catch (DeploymentException | URISyntaxException | IOException e) {
