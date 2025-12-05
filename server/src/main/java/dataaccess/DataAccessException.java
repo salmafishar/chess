@@ -30,13 +30,6 @@ public class DataAccessException extends Exception {
         return new Gson().toJson(Map.of("message", getMessage(), "status", code));
     }
 
-    public int toHttpStatusCode() {
-        return switch (code) {
-            case ServerError -> 500;
-            case ClientError -> 400;
-        };
-    }
-
     public enum Code {
         ServerError,
         ClientError
