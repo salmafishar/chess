@@ -74,4 +74,19 @@ public class WebSocketFacade extends Endpoint {
             throw new DataAccessException(DataAccessException.Code.ServerError, e.getMessage());
         }
     }
+
+    /*
+    send messages TO sever:
+    receives a UserGameCommand object
+    builds a JSON string from it >> serializes it
+    sends it to server through ws
+     */
+    public void SendCommands(UserGameCommand command) throws DataAccessException {
+        try {
+            String json = new Gson().toJson(command);
+            this.session.getBasicRemote().sendText(json);
+        } catch (IOException e) {
+            throw new DataAccessException(DataAccessException.Code.ServerError, e.getMessage());
+        }
+    }
 }
