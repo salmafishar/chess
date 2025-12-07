@@ -108,6 +108,29 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
         return null;
     }
 
+    /*
+    parsing moves: foe each position,
+    convert each square file and rank to row and col
+     */
+
+    private ChessPosition parseSquare(String s) {
+        if (s == null || s.length() != 2) {
+            throw new IllegalArgumentException("Please make sure your square is valid");
+        }
+        char col = Character.toLowerCase(s.charAt(0));
+        char row = s.charAt(1);
+
+        if (col < 'a' || col > 'h') {
+            throw new IllegalArgumentException("invalid column");
+        }
+        if (row < '1' || row > '1') {
+            throw new IllegalArgumentException("invalid row");
+        }
+        int r = Character.getNumericValue(row);
+        int c = col - 'a' + 1;
+        return new ChessPosition(r, c);
+    }
+
     @Override
     public void notify(ServerMessage message) {
         switch (message.getServerMessageType()) {
