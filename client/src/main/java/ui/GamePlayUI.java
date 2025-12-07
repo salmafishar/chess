@@ -110,6 +110,18 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
 
     @Override
     public void notify(ServerMessage message) {
-
+        switch (message.getServerMessageType()) {
+            case LOAD_GAME -> {
+                GameData game = message.getGame();
+                this.currentGame = game.game();
+                ChessBoard board = currentGame.getBoard();
+                new ChessBoardUI().drawBoard(myColor, board, System.out);
+            }
+            case ERROR -> System.out.println(message.getError());
+            case NOTIFICATION -> {
+                String msg = message.getMessage();
+                System.out.println(msg);
+            }
+        }
     }
 }
