@@ -102,7 +102,27 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
     }
 
     private String makeMove(String[] params) {
-        return null;
+        if (currentGame == null) {
+            return "game is not uploaded yet. please wait for the board to appear first.";
+        }
+        if (params.length != 2) {
+            return "To make a move, use: move <from> <to>. example: move e3 e6.";
+        }
+        try {
+            ChessPosition from = parseSquare(params[0]);
+            ChessPosition to = parseSquare(params[1]);
+            ChessMove move = new ChessMove(from, to, null); // no promotion yet.
+            UserGameCommand cmd = new UserGameCommand(
+                    UserGameCommand.CommandType.MAKE_MOVE,
+                    authToken,
+                    gameID,
+                    move
+            );
+            ws.SendCommands(cmd);
+            return "Successfully moved from " + params[0] + " to " + params[1];
+        } catch (Exception e) {
+            return "Error sending move: " + e.getMessage();
+        }
     }
 
     private String resign(String[] params) {
