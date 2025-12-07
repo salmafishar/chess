@@ -89,7 +89,12 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
     }
 
     private String redrawChessBoard(String[] params) {
-        return null;
+        if (currentGame == null) {
+            return "Game is not loaded. Try again";
+        }
+        ChessBoard board = currentGame.getBoard();
+        new ChessBoardUI().drawBoard(myColor, board, System.out);
+        return "Board has redrawn successfully.";
     }
 
     private String leave(String[] params) {
