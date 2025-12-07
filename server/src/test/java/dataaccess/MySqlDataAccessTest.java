@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -107,7 +108,7 @@ class MySqlDataAccessTest {
     @Test
     void createGamePass() throws Exception {
         int gameID = dao.games().createGame(new GameData(0,
-                null, null, "game1"));
+                null, null, "game1", new ChessGame()));
         assertTrue(gameID > 0);
     }
 
@@ -115,14 +116,14 @@ class MySqlDataAccessTest {
     void createGameFail() throws Exception {
         dao.users().createUser(new UserData("sal", "231|-|", "s@woo.com"));
         var ex = assertThrows(DataAccessException.class, () ->
-                dao.games().createGame(new GameData(0, "ghost", null, "g2")));
+                dao.games().createGame(new GameData(0, "ghost", null, "g2", new ChessGame())));
         assertEquals("Failed to create game", ex.getMessage());
     }
 
     @Test
     void getGamePass() throws Exception {
         int gameID = dao.games().createGame(new GameData(0,
-                null, null, "game1"));
+                null, null, "game1", new ChessGame()));
         GameData g = dao.games().getGame(gameID);
         assertEquals("game1", g.gameName());
 
@@ -137,9 +138,9 @@ class MySqlDataAccessTest {
     @Test
     void listGamesPass() throws Exception {
         dao.games().createGame(new GameData(0,
-                null, null, "game1"));
+                null, null, "game1", new ChessGame()));
         dao.games().createGame(new GameData(0,
-                null, null, "game2"));
+                null, null, "game2", new ChessGame()));
 
         var games = dao.games().listGames();
         assertEquals(2, games.size());
@@ -148,30 +149,30 @@ class MySqlDataAccessTest {
     @Test
     void listGamesFail() throws Exception {
         dao.games().createGame(new GameData(0,
-                null, null, "game1"));
+                null, null, "game1", new ChessGame()));
         var games = dao.games().listGames();
         assertEquals(1, games.size());
         var ex = assertThrows(DataAccessException.class, () -> dao.games().createGame(
-                new GameData(0, "woo", null, "nope")));
+                new GameData(0, "woo", null, "nope", new ChessGame())));
         assertEquals("Failed to create game", ex.getMessage());
     }
 
     @Test
     void updateGamePass() throws Exception {
-        int id = dao.games().createGame(new GameData(0, null, null, "game1"));
+        int id = dao.games().createGame(new GameData(0, null, null, "game1", new ChessGame()));
         dao.users().createUser(new UserData("woo",
                 "pw", "woo@example.com"));
         dao.games().updateGame(new GameData(id,
-                "woo", null, "game1"));
+                "woo", null, "game1", new ChessGame()));
         var g = dao.games().getGame(id);
         assertEquals("woo", g.whiteUsername());
     }
 
     @Test
     void updateGameFail() throws Exception {
-        int id = dao.games().createGame(new GameData(0, null, null, "game1"));
+        int id = dao.games().createGame(new GameData(0, null, null, "game1", new ChessGame()));
         var ex = assertThrows(DataAccessException.class, () -> dao.games().updateGame(new GameData(id,
-                "woo", null, "game1")));
+                "woo", null, "game1", new ChessGame())));
         assertEquals("failed to update game", ex.getMessage());
     }
 }

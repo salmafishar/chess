@@ -88,7 +88,7 @@ public class MemoryDataAccess implements DataAccess {
         public int createGame(GameData g) {
             int id = nextGameId++;
             var newGame = new GameData(id, g.whiteUsername(),
-                    g.blackUsername(), g.gameName());
+                    g.blackUsername(), g.gameName(), g.game());
             store.put(id, newGame);
             return id;
         }

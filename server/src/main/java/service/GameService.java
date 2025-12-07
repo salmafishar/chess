@@ -4,6 +4,7 @@ Each service method receives a Request object containing all the information it 
 After performing its purpose, it returns a corresponding Result object containing the output of the method.
  */
 
+import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.GameData;
@@ -32,7 +33,7 @@ public class GameService {
         var summaries = new ArrayList<GameData>();
         for (var game : allGames) {
             summaries.add(new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(),
-                    game.gameName()));
+                    game.gameName(), game.game()));
         }
         return new ListResult(summaries);
     }
@@ -46,7 +47,7 @@ public class GameService {
             throw new DataAccessException("bad request");
         }
         int id = dataAccess.games().createGame(new GameData(0, null, null,
-                name));
+                name, new ChessGame()));
         return new CreateResult(id);
     }
 
@@ -80,12 +81,12 @@ public class GameService {
             throw new DataAccessException("bad request");
         }
         if (color.equals("WHITE")) {
-            g = new GameData(g.gameID(), username, g.blackUsername(), g.gameName());
+            g = new GameData(g.gameID(), username, g.blackUsername(), g.gameName(), g.game());
         } else {
             if (g.blackUsername() != null) {
                 throw new DataAccessException("already taken");
             }
-            g = new GameData(g.gameID(), g.whiteUsername(), username, g.gameName());
+            g = new GameData(g.gameID(), g.whiteUsername(), username, g.gameName(), g.game());
         }
         dataAccess.games().updateGame(g);
         new JoinResult();

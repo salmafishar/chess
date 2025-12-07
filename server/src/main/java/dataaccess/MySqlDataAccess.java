@@ -197,7 +197,7 @@ public class MySqlDataAccess implements DataAccess {
                         String white = rs.getString("whiteUsername");
                         String black = rs.getString("blackUsername");
                         String name = rs.getString("gameName");
-                        return new GameData(id, white, black, name);
+                        return new GameData(id, white, black, name, new ChessGame());
                     }
                     throw new DataAccessException("game not found");
                 }
@@ -219,7 +219,7 @@ public class MySqlDataAccess implements DataAccess {
                     String white = rs.getString("whiteUsername");
                     String black = rs.getString("blackUsername");
                     String name = rs.getString("gameName");
-                    out.add(new GameData(id, white, black, name));
+                    out.add(new GameData(id, white, black, name, new ChessGame()));
                 }
                 return out;
             } catch (SQLException e) {
