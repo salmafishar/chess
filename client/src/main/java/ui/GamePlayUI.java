@@ -98,7 +98,17 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
     }
 
     private String leave(String[] params) {
-        return null;
+        try {
+            UserGameCommand cmd = new UserGameCommand(
+                    UserGameCommand.CommandType.LEAVE,
+                    authToken,
+                    gameID,
+                    null
+            );
+        } catch (Exception ex) {
+            return "error leaving game: " + ex.getMessage();
+        }
+        return "User left the game";
     }
 
     private String makeMove(String[] params) {
@@ -126,7 +136,17 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
     }
 
     private String resign(String[] params) {
-        return null;
+        try {
+            UserGameCommand cmd = new UserGameCommand(
+                    UserGameCommand.CommandType.RESIGN,
+                    authToken,
+                    gameID,
+                    null
+            );
+        } catch (Exception ex) {
+            return "error resigning: " + ex.getMessage();
+        }
+        return "User resigned the game";
     }
 
     private String highlight(String[] params) {
