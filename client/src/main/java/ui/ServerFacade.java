@@ -136,4 +136,7 @@ public class ServerFacade {
         handleResponse(res, null);
     }
 
+    public String getServerURL() {
+        return serverUrl;
+    }
 }
