@@ -55,8 +55,9 @@ public class PreLoginUI implements ClientUI {
         repl.postLogin.setAuthToken(register.authToken());
         return String.format("You are now logged in. Your username is %s", register.username());
     }
-    // saved username >> login tyjo 21pi 21pi@by.ed
 
+    // saved username >> login tyjo 21pi 21pi@by.ed
+    //register star star2 star2@gstar.com
     // name password
     public String login(String[] params) throws Exception {
         if (params.length != 2) {
