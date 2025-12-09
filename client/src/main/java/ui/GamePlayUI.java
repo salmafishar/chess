@@ -25,12 +25,18 @@ package ui;
         This is a local operation and has no effect on remote users’ screens.
  */
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import dataaccess.DataAccessException;
+import model.GameData;
 import websocket.ServerMessageHandler;
 import websocket.WebSocketFacade;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
+
+import java.util.Collection;
 
 public class GamePlayUI implements ClientUI, ServerMessageHandler {
     private String authToken = null;
@@ -38,7 +44,7 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
     private ChessGame.TeamColor myColor;
     private ChessGame currentGame;
     private final int gameID;
-    private final String serverUrl;
+    private boolean gameOver = false;
 
     /*
      store token, gameID, color and url
@@ -49,11 +55,13 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
         this.authToken = authToken;
         this.myColor = myColor;
         this.gameID = gameID;
-        this.serverUrl = serverUrl;
         this.ws = new WebSocketFacade(serverUrl, this);
 
         UserGameCommand cmd = new UserGameCommand(
-                UserGameCommand.CommandType.CONNECT, authToken, gameID
+                UserGameCommand.CommandType.CONNECT,
+                authToken,
+                gameID,
+                null
         );
         ws.SendCommands(cmd);
     }
@@ -66,6 +74,7 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
                     - move <from> <to>
                     - resign
                     - leave
+                    - redraw
                     - highlight <square>
                     - help
                     """;
@@ -105,13 +114,17 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
                     gameID,
                     null
             );
+            ws.SendCommands(cmd);
+            return "left game";
         } catch (Exception ex) {
             return "error leaving game: " + ex.getMessage();
         }
-        return "User left the game";
     }
 
     private String makeMove(String[] params) {
+        if (gameOver) {
+            return "Game is over. No more moves can be made.";
+        }
         if (currentGame == null) {
             return "game is not uploaded yet. please wait for the board to appear first.";
         }
@@ -136,6 +149,18 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
     }
 
     private String resign(String[] params) {
+        if (gameOver) {
+            return "Game is already over.";
+        }
+        if (params.length == 0) {
+            return """
+                    This will forfeit the game and mark it as over.
+                    If you're sure, type: resign confirm
+                    """;
+        }
+        if (!params[0].equalsIgnoreCase("confirm")) {
+            return "Resign cancelled.";
+        }
         try {
             UserGameCommand cmd = new UserGameCommand(
                     UserGameCommand.CommandType.RESIGN,
@@ -143,14 +168,16 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
                     gameID,
                     null
             );
+            ws.SendCommands(cmd);
+            gameOver = true;
+            return "You resigned. The game is now over.";
         } catch (Exception ex) {
             return "error resigning: " + ex.getMessage();
         }
-        return "User resigned the game";
     }
 
     private String highlight(String[] params) {
-        return null;
+        return "highlight not implemented yet";
     }
 
     /*
@@ -168,13 +195,21 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
         if (col < 'a' || col > 'h') {
             throw new IllegalArgumentException("invalid column");
         }
-        if (row < '1' || row > '1') {
+        if (row < '1' || row > '8') {
             throw new IllegalArgumentException("invalid row");
         }
         int r = Character.getNumericValue(row);
         int c = col - 'a' + 1;
         return new ChessPosition(r, c);
     }
+    /*
+    Command >> Required Fields >> Description
+    LOAD_GAME >> game (can be any type, just needs to be called game) >> Used by the server to send the current game state to a client.
+                            When a client receives this message, it will redraw the chess board.
+    ERROR >> String errorMessage >>This message is sent to a client when it sends an invalid command.
+        The message must include the word Error.
+    NOTIFICATION >> String message >> This is a message meant to inform a player when another player made an action.
+     */
 
     @Override
     public void notify(ServerMessage message) {
