@@ -28,6 +28,7 @@ import static ui.EscapeSequences.*;
 public class Repl {
     final PostLoginUI postLogin;
     private final PreLoginUI preLogin;
+    private GamePlayUI gameplay;
     private UIMode state = UIMode.PreLogin;
 
     public Repl(String serverURL) {
@@ -42,6 +43,11 @@ public class Repl {
 
     public void switchToPreLogin() {
         state = UIMode.PreLogin;
+    }
+
+    public void switchToGamePlay(GamePlayUI ui) {
+        this.gameplay = ui;
+        this.state = UIMode.GamePlay;
     }
 
     public void run() {
@@ -64,7 +70,14 @@ public class Repl {
 
     public String eval(String input) {
 
-        ClientUI ui = (state == UIMode.PreLogin) ? preLogin : postLogin;
+        ClientUI ui;
+        if (state == UIMode.PreLogin) {
+            ui = preLogin;
+        } else if (state == UIMode.PostLogin) {
+            ui = postLogin;
+        } else {
+            ui = gameplay;
+        }
         try {
             String[] tokens = input.trim().split("\\s+");
             String cmd = (tokens.length > 0) ? tokens[0].toLowerCase() : "help";
@@ -73,9 +86,17 @@ public class Repl {
                 return "quit";
             }
             if ("help".equals(cmd)) {
+                if (state == UIMode.GamePlay) {
+                    return ui.handle(cmd, params);
+                }
                 return help();
             }
-            return ui.handle(cmd, params);
+            String result = ui.handle(cmd, params);
+            if (state == UIMode.GamePlay && "left game".equalsIgnoreCase(result)) {
+                switchToPostLogin();
+                return "You successfully left the game.";
+            }
+            return result;
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -103,6 +124,7 @@ public class Repl {
 
     enum UIMode {
         PreLogin,
-        PostLogin
+        PostLogin,
+        GamePlay
     }
 }
