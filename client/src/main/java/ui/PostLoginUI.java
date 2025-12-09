@@ -1,6 +1,5 @@
 package ui;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import model.GameData;
 import requests.ListRequest;
@@ -116,20 +115,21 @@ public class PostLoginUI implements ClientUI {
             return "Color must be WHITE or BLACK. Example: join 1 white";
         }
         server.join(authToken, gameID, color);
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
         ChessGame.TeamColor myColor = color.equals("WHITE")
                 ? ChessGame.TeamColor.WHITE
                 : ChessGame.TeamColor.BLACK;
-
-        new ChessBoardUI().drawBoard(myColor, board, System.out);
-
-        return String.format("You joined %s as %s", game.gameName(), color.toLowerCase());
+        String serverUrl = server.getServerURL();
+        var gameplay = new GamePlayUI(authToken, serverUrl, gameID, myColor);
+        repl.switchToGamePlay(gameplay);
+        return "Entering game...";
     }
 
-    public String observe(String[] params) {
+    public String observe(String[] params) throws Exception {
         if (params.length != 1) {
             return "To observe a game, please type in: observe <GameID>;";
+        }
+        if (listGames == null || listGames.isEmpty()) {
+            return "You need to list your games first. To do so, type list";
         }
         GameData game;
         try {
@@ -138,12 +138,11 @@ public class PostLoginUI implements ClientUI {
             return e.getMessage();
         }
         int gameID = game.gameID();
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        ChessBoardUI ui = new ChessBoardUI();
-        ui.drawBoard(ChessGame.TeamColor.WHITE, board, System.out);
-
-        return String.format("You are now observing \"%s\" (game ID %d).", game.gameName(), gameID);
+        ChessGame.TeamColor observerColor = ChessGame.TeamColor.WHITE;
+        String serverUrl = server.getServerURL();
+        var gameplay = new GamePlayUI(authToken, serverUrl, gameID, observerColor);
+        repl.switchToGamePlay(gameplay);
+        return "Entering game as observer...";
     }
 
     private GameData getGameByIndex(String indexStr) {
