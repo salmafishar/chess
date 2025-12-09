@@ -176,6 +176,12 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
         }
     }
 
+    private String positionToSquare(ChessPosition pos) {
+        char col = (char) ('a' + pos.getColumn() - 1);
+        char row = (char) ('0' + pos.getRow());
+        return "" + col + row;
+    }
+
     private String highlight(String[] params) {
         if (currentGame == null) {
             return "game is not uploaded yet. please wait for the board to appear first.";
