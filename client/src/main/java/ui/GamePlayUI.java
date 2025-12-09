@@ -177,7 +177,42 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
     }
 
     private String highlight(String[] params) {
-        return "highlight not implemented yet";
+        if (currentGame == null) {
+            return "game is not uploaded yet. please wait for the board to appear first.";
+        }
+        if (params.length != 1) {
+            return "To highlight legal moves, use: highlight <square>. example: highlight e2.";
+        }
+        try {
+            ChessPosition from = parseSquare(params[0]);
+            var piece = currentGame.getBoard().getPiece(from);
+            if (piece == null) {
+                return "There is no piece on " + params[0] + ".";
+            }
+
+            Collection<ChessMove> moves = currentGame.validMoves(from);
+            if (moves == null || moves.isEmpty()) {
+                return "No legal moves available for the piece on " + params[0] + ".";
+            }
+            ChessBoard board = currentGame.getBoard();
+            new ChessBoardUI().drawBoard(myColor, board, System.out);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Legal moves from ").append(params[0]).append(": ");
+            boolean first = true;
+            for (ChessMove m : moves) {
+                if (!first) {
+                    sb.append(", ");
+                }
+                first = false;
+                sb.append(positionToSquare(m.getEndPosition()));
+            }
+            sb.append(".");
+            return sb.toString();
+
+        } catch (Exception e) {
+            return "Error highlighting moves: " + e.getMessage();
+        }
     }
 
     /*
