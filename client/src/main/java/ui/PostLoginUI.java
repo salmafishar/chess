@@ -69,7 +69,7 @@ public class PostLoginUI implements ClientUI {
         String gameName = params[0];
         var create = server.create(authToken, gameName);
         return String.format("Now, you have created the game `%s`. The game ID is %d.\n" +
-                "To join the game, please type in join <GameID> <WHITE | BLACK>", gameName, create.gameID());
+                "To join the game, please list all the games using `list`,\n then type in join <GameID> <WHITE | BLACK>", gameName, create.gameID());
     }
 
     // String authToken,
