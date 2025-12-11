@@ -81,7 +81,7 @@ public class WebSocketFacade extends Endpoint {
     builds a JSON string from it >> serializes it
     sends it to server through ws
      */
-    public void SendCommands(UserGameCommand command) throws Exception {
+    public void sendCommands(UserGameCommand command) throws Exception {
         try {
             String json = new Gson().toJson(command);
             this.session.getBasicRemote().sendText(json);
