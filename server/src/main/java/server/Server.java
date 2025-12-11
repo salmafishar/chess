@@ -8,11 +8,6 @@ import io.javalin.Javalin;
 import server.handlers.*;
 import service.GameService;
 import service.UserService;
-import io.javalin.websocket.WsContext;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
 

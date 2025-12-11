@@ -29,7 +29,6 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import dataaccess.DataAccessException;
 import model.GameData;
 import websocket.ServerMessageHandler;
 import websocket.WebSocketFacade;
@@ -52,7 +51,7 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
      create websocket
      connect
      */
-    public GamePlayUI(String authToken, String serverUrl, int gameID, ChessGame.TeamColor myColor) throws DataAccessException {
+    public GamePlayUI(String authToken, String serverUrl, int gameID, ChessGame.TeamColor myColor) throws Exception {
         this.authToken = authToken;
         this.myColor = myColor;
         this.gameID = gameID;

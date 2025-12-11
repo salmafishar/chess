@@ -35,7 +35,6 @@ Closing websocket:
  */
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import jakarta.websocket.*;
 import websocket.messages.ServerMessage;
 import websocket.commands.UserGameCommand;
@@ -54,7 +53,7 @@ public class WebSocketFacade extends Endpoint {
     }
 
     // connect
-    public WebSocketFacade(String url, ServerMessageHandler msgHandler) throws DataAccessException {
+    public WebSocketFacade(String url, ServerMessageHandler msgHandler) throws Exception {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
@@ -72,7 +71,7 @@ public class WebSocketFacade extends Endpoint {
                 }
             });
         } catch (DeploymentException | URISyntaxException | IOException e) {
-            throw new DataAccessException(DataAccessException.Code.ServerError, e.getMessage());
+            throw new Exception("Failed to send WebSocket message: " + e.getMessage(), e);
         }
     }
 
@@ -82,12 +81,12 @@ public class WebSocketFacade extends Endpoint {
     builds a JSON string from it >> serializes it
     sends it to server through ws
      */
-    public void SendCommands(UserGameCommand command) throws DataAccessException {
+    public void SendCommands(UserGameCommand command) throws Exception {
         try {
             String json = new Gson().toJson(command);
             this.session.getBasicRemote().sendText(json);
         } catch (IOException e) {
-            throw new DataAccessException(DataAccessException.Code.ServerError, e.getMessage());
+            throw new Exception("Failed to send WebSocket message: " + e.getMessage(), e);
         }
     }
 }
