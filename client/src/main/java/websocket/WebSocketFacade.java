@@ -38,6 +38,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import jakarta.websocket.*;
 import websocket.messages.ServerMessage;
+import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 import java.net.URI;

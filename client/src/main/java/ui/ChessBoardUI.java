@@ -6,12 +6,24 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.io.PrintStream;
+import java.util.Collection;
+import java.util.Collections;
 
 import static ui.EscapeSequences.*;
 
 public class ChessBoardUI {
 
-    public void drawBoard(ChessGame.TeamColor color, ChessBoard board, PrintStream out) {
+    public void drawBoard(ChessGame.TeamColor color,
+                          ChessBoard board,
+                          PrintStream out) {
+        drawBoard(color, board, Collections.emptySet(), out);
+    }
+
+    public void drawBoard(ChessGame.TeamColor color,
+                          ChessBoard board,
+                          Collection<ChessPosition> highlights,
+                          PrintStream out) {
+
         int[] rankOrder;
         int[] fileOrder;
 
@@ -32,7 +44,9 @@ public class ChessBoardUI {
         for (int rank : rankOrder) {
             printRankLabel(out, rank);
             for (int file : fileOrder) {
-                setSquareColor(out, rank, file);
+                ChessPosition pos = new ChessPosition(rank, file);
+                boolean isHighlighted = (highlights != null && highlights.contains(pos));
+                setSquareColor(out, rank, file, isHighlighted);
                 String symbol = getPieceSymbol(board, rank, file);
                 out.print(symbol);
             }
@@ -69,7 +83,12 @@ public class ChessBoardUI {
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private void setSquareColor(PrintStream out, int rank, int file) {
+    private void setSquareColor(PrintStream out, int rank, int file, boolean highlight) {
+        if (highlight) {
+            out.print(SET_BG_COLOR_YELLOW);
+            out.print(SET_TEXT_COLOR_BLACK);
+            return;
+        }
         boolean isLight = ((rank + file) % 2 == 0);
         if (isLight) {
             out.print(SET_BG_COLOR_LIGHT_GREY);
@@ -99,6 +118,4 @@ public class ChessBoardUI {
             case PAWN -> isWhite ? WHITE_PAWN : BLACK_PAWN;
         };
     }
-
-
 }

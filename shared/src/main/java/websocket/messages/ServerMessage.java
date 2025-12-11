@@ -14,7 +14,7 @@ public class ServerMessage {
     ServerMessageType serverMessageType;
     private GameData game;
     private String message;
-    private String error;
+    private String errorMessage;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -34,8 +34,8 @@ public class ServerMessage {
         return message;
     }
 
-    public String getError() {
-        return error;
+    public String getErrorMessage() {
+        return errorMessage;
     }
 
     public void setGame(GameData game) {
@@ -46,8 +46,8 @@ public class ServerMessage {
         this.message = message;
     }
 
-    public void setError(String error) {
-        this.error = error;
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public ServerMessageType getServerMessageType() {

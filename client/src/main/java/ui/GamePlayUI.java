@@ -36,7 +36,8 @@ import websocket.WebSocketFacade;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GamePlayUI implements ClientUI, ServerMessageHandler {
     private String authToken = null;
@@ -68,7 +69,7 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
 
 
     @Override
-    public String handle(String cmd, String[] params) throws Exception {
+    public String handle(String cmd, String[] params) {
         if (cmd.equalsIgnoreCase("help")) {
             return """
                     - move <from> <to>
@@ -196,17 +197,21 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
                 return "There is no piece on " + params[0] + ".";
             }
 
-            Collection<ChessMove> moves = currentGame.validMoves(from);
+            var moves = currentGame.validMoves(from);
             if (moves == null || moves.isEmpty()) {
                 return "No legal moves available for the piece on " + params[0] + ".";
             }
             ChessBoard board = currentGame.getBoard();
-            new ChessBoardUI().drawBoard(myColor, board, System.out);
-
+            Set<ChessPosition> highlights = new HashSet<>();
+            highlights.add(from);
+            for (var m : moves) {
+                highlights.add(m.getEndPosition());
+            }
+            new ChessBoardUI().drawBoard(myColor, board, highlights, System.out);
             StringBuilder sb = new StringBuilder();
             sb.append("Legal moves from ").append(params[0]).append(": ");
             boolean first = true;
-            for (ChessMove m : moves) {
+            for (var m : moves) {
                 if (!first) {
                     sb.append(", ");
                 }
@@ -215,7 +220,6 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
             }
             sb.append(".");
             return sb.toString();
-
         } catch (Exception e) {
             return "Error highlighting moves: " + e.getMessage();
         }
@@ -261,7 +265,7 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
                 ChessBoard board = currentGame.getBoard();
                 new ChessBoardUI().drawBoard(myColor, board, System.out);
             }
-            case ERROR -> System.out.println(message.getError());
+            case ERROR -> System.out.println(message.getErrorMessage());
             case NOTIFICATION -> {
                 String msg = message.getMessage();
                 System.out.println(msg);

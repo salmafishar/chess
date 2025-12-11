@@ -171,8 +171,8 @@ public class MySqlDataAccess implements DataAccess {
                     ps.setString(2, g.blackUsername());
                 }
                 ps.setString(3, g.gameName());
-                var game = new Gson().toJson(new ChessGame());
-                ps.setString(4, game);
+                var gameJson = new Gson().toJson(g.game());
+                ps.setString(4, gameJson);
                 ps.executeUpdate();
                 try (var rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
@@ -197,7 +197,9 @@ public class MySqlDataAccess implements DataAccess {
                         String white = rs.getString("whiteUsername");
                         String black = rs.getString("blackUsername");
                         String name = rs.getString("gameName");
-                        return new GameData(id, white, black, name, new ChessGame());
+                        String gameJson = rs.getString("game");
+                        ChessGame chess = new Gson().fromJson(gameJson, ChessGame.class);
+                        return new GameData(id, white, black, name, chess);
                     }
                     throw new DataAccessException("game not found");
                 }
@@ -234,7 +236,7 @@ public class MySqlDataAccess implements DataAccess {
             }
             final var sql = """
                     UPDATE game
-                    SET whiteUsername = ?, blackUsername = ?, gameName = ?
+                    SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ?
                     WHERE gameID = ?
                     """;
             try (var conn = DatabaseManager.getConnection();
@@ -250,7 +252,9 @@ public class MySqlDataAccess implements DataAccess {
                     ps.setString(2, g.blackUsername());
                 }
                 ps.setString(3, g.gameName());
-                ps.setInt(4, g.gameID());
+                String gameJson = new Gson().toJson(g.game());
+                ps.setString(4, gameJson);
+                ps.setInt(5, g.gameID());
                 int updated = ps.executeUpdate();
                 if (updated == 0) {
                     throw new DataAccessException("game not found");

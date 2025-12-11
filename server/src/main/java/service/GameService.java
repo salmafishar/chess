@@ -5,6 +5,8 @@ After performing its purpose, it returns a corresponding Result object containin
  */
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.GameData;
@@ -90,5 +92,93 @@ public class GameService {
         }
         dataAccess.games().updateGame(g);
         new JoinResult();
+    }
+
+    // for ws:
+    public GameData getGame(String authToken, int gameID) throws DataAccessException {
+        var auth = dataAccess.auths().getAuth(authToken);
+        if (auth == null) {
+            throw new DataAccessException("unauthorized");
+        }
+        var game = dataAccess.games().getGame(gameID);
+        if (game == null) {
+            throw new DataAccessException("bad request");
+        }
+        return game;
+    }
+
+    public void makeMove(String authToken, int gameID, ChessMove move)
+            throws DataAccessException, InvalidMoveException {
+        var auth = dataAccess.auths().getAuth(authToken);
+        if (auth == null) {
+            throw new DataAccessException("unauthorized");
+        }
+        var game = dataAccess.games().getGame(gameID);
+        if (game == null) {
+            throw new DataAccessException("bad request");
+        }
+        ChessGame chess = game.game();
+        if (chess.isGameOver()) {
+            throw new DataAccessException("game already over");
+        }
+        String username = auth.username();
+        ChessGame.TeamColor playerColor;
+        if (username.equals(game.whiteUsername())) {
+            playerColor = ChessGame.TeamColor.WHITE;
+        } else if (username.equals(game.blackUsername())) {
+            playerColor = ChessGame.TeamColor.BLACK;
+        } else {
+            throw new DataAccessException("observers cannot move pieces");
+        }
+        if (chess.getTeamTurn() != playerColor) {
+            throw new DataAccessException("not your turn");
+        }
+        var board = chess.getBoard();
+        var piece = board.getPiece(move.getStartPosition());
+        if (piece == null) {
+            throw new DataAccessException("no piece at starting position");
+        }
+        if (piece.getTeamColor() != playerColor) {
+            throw new DataAccessException("cannot move opponent pieces");
+        }
+        chess.makeMove(move);
+        GameData updated = new GameData(
+                game.gameID(),
+                game.whiteUsername(),
+                game.blackUsername(),
+                game.gameName(),
+                chess
+        );
+        dataAccess.games().updateGame(updated);
+    }
+
+    public void resign(String authToken, int gameID) throws DataAccessException {
+        var auth = dataAccess.auths().getAuth(authToken);
+        if (auth == null) {
+            throw new DataAccessException("unauthorized");
+        }
+        var game = dataAccess.games().getGame(gameID);
+        if (game == null) {
+            throw new DataAccessException("bad request");
+        }
+        String username = auth.username();
+        boolean isWhite = username.equals(game.whiteUsername());
+        boolean isBlack = username.equals(game.blackUsername());
+        if (!isWhite && !isBlack) {
+            throw new DataAccessException("observers cannot resign");
+        }
+        ChessGame chess = game.game();
+        if (chess.isGameOver()) {
+            throw new DataAccessException("game already over");
+        }
+        chess.setGameOver(true);
+        GameData updated = new GameData(
+                game.gameID(),
+                game.whiteUsername(),
+                game.blackUsername(),
+                game.gameName(),
+                chess
+        );
+        dataAccess.games().updateGame(updated);
     }
 }
