@@ -63,7 +63,7 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
                 gameID,
                 null
         );
-        ws.SendCommands(cmd);
+        ws.sendCommands(cmd);
     }
 
 
@@ -114,7 +114,7 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
                     gameID,
                     null
             );
-            ws.SendCommands(cmd);
+            ws.sendCommands(cmd);
             return "left game";
         } catch (Exception ex) {
             return "error leaving game: " + ex.getMessage();
@@ -141,7 +141,7 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
                     gameID,
                     move
             );
-            ws.SendCommands(cmd);
+            ws.sendCommands(cmd);
             return "Successfully moved from " + params[0] + " to " + params[1];
         } catch (Exception e) {
             return "Error sending move: " + e.getMessage();
@@ -168,7 +168,7 @@ public class GamePlayUI implements ClientUI, ServerMessageHandler {
                     gameID,
                     null
             );
-            ws.SendCommands(cmd);
+            ws.sendCommands(cmd);
             gameOver = true;
             return "You resigned. The game is now over.";
         } catch (Exception ex) {
